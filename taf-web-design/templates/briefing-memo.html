@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Briefing Memo · The Agency Fund</title>
+  <meta name="description" content="A one-page briefing memo from The Agency Fund.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- For deployment, inline the contents of tokens.css here -->
+  <link rel="stylesheet" href="../tokens.css">
+
+  <style>
+    body { background: var(--color-surface-subtle); }
+    .memo {
+      max-width: 880px;
+      margin: var(--space-2xl) auto;
+      background: var(--color-surface);
+      padding: var(--space-4xl);
+      border-radius: var(--radius-panel);
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--color-border-subtle);
+    }
+    .memo__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-lg);
+      flex-wrap: wrap;
+      padding-bottom: var(--space-lg);
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: var(--space-xl);
+    }
+    .memo__id { text-align: right; font-size: var(--fs-sm); color: var(--color-ink-muted); }
+    .memo__id strong { color: var(--color-ink-navy); display: block; font-size: var(--fs-base); margin-bottom: var(--space-xs); }
+
+    .findings { display: grid; gap: var(--space-md); margin: var(--space-xl) 0; }
+    .finding {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: var(--space-lg);
+      padding: var(--space-lg) 0;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .finding:last-child { border-bottom: 0; }
+    .finding__num {
+      font-family: var(--font-family);
+      font-weight: var(--fw-hero);
+      font-size: 3rem;
+      line-height: 1;
+      color: var(--color-action);
+      letter-spacing: var(--ls-tight);
+    }
+    .finding__body h3 { margin-bottom: var(--space-sm); }
+    .finding__body p { color: var(--color-ink-secondary); }
+
+    .recommendation {
+      background: var(--color-gravity);
+      color: var(--color-ink-inverse);
+      border-radius: var(--radius-panel);
+      padding: var(--space-2xl);
+      margin-top: var(--space-xl);
+    }
+    .recommendation .eyebrow { color: var(--taf-gold-300); }
+    .recommendation h2 { color: var(--color-ink-inverse); }
+    .recommendation p { color: var(--color-ink-inverse); opacity: 0.92; }
+
+    @media print {
+      body { background: var(--color-surface); }
+      .memo { box-shadow: none; border: 0; margin: 0; padding: var(--space-xl); }
+    }
+  </style>
+</head>
+<body>
+
+  <article class="memo">
+
+    <header class="memo__header">
+      <div>
+        <span class="eyebrow">Briefing Memo</span>
+        <h1 style="font-size: var(--fs-fluid-h2); max-width: 18ch">Counseling moves <span class="accent-gold">outcomes</span> in maternal care</h1>
+      </div>
+      <div class="memo__id">
+        <strong>To:</strong> Board, Investment Committee<br>
+        <strong>From:</strong> Research Team<br>
+        <strong>Date:</strong> March 2026<br>
+        <strong>Subject:</strong> Maternal-Health Cohort Evaluation
+      </div>
+    </header>
+
+    <p class="lead">A twelve-month evaluation across three TAF-backed organizations finds that household-level caregiver training — not just patient counseling — is the lever for durable behavior change.</p>
+
+    <!-- Three findings -->
+    <div class="findings">
+      <span class="eyebrow">Three findings</span>
+
+      <div class="finding">
+        <div class="finding__num">01</div>
+        <div class="finding__body">
+          <h3>Counseling adherence rose 34%</h3>
+          <p>Households with a trained family caregiver completed a full counseling sequence at a substantially higher rate than the control group, with the largest effect where the trained caregiver was a senior household member.</p>
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding__num">02</div>
+        <div class="finding__body">
+          <h3>Postnatal visits up 21%</h3>
+          <p>Trained caregivers reported faster recognition of warning signs, leading to earlier postnatal visits across all three sites.</p>
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="finding__num">03</div>
+        <div class="finding__body">
+          <h3>Sustained at 12 months</h3>
+          <p>Behavior change persisted at the 12-month follow-up, suggesting durable household-level practice change rather than a short-term study effect.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendation -->
+    <div class="recommendation">
+      <span class="eyebrow">Recommendation</span>
+      <h2>Direct the next round toward <span class="accent-gold">family-caregiver training</span></h2>
+      <p>We recommend committing an additional $4M over two years to extend household-caregiver training across the cohort and to fund one external replication study with an independent research partner.</p>
+      <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; margin-top: var(--space-lg)">
+        <a href="#full" class="btn btn--primary">Read the full report →</a>
+        <a href="#contact" class="btn btn--outline" style="color: var(--color-ink-inverse); border-color: var(--taf-gold-400)">Talk to the team</a>
+      </div>
+    </div>
+
+    <footer style="margin-top: var(--space-2xl); padding-top: var(--space-lg); border-top: 1px solid var(--color-border-subtle); font-size: var(--fs-sm); color: var(--color-ink-muted)">
+      <p style="margin: 0">
+        Sources: TAF (2026), <strong>Maternal-Health Cohort Evaluation, 2025–2026.</strong>
+        Full methodology, sample sizes, and survey instruments available in the supplementary materials.
+      </p>
+    </footer>
+
+  </article>
+
+</body>
+</html>

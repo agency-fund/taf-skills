@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Artifacts · The Agency Fund</title>
+  <meta name="description" content="A collection of research artifacts from The Agency Fund.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../tokens.css">
+
+  <style>
+    .topnav { position: sticky; top: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--color-border-subtle); z-index: 50; }
+    .topnav__inner { display: flex; align-items: center; justify-content: space-between; padding: var(--space-md) var(--content-padding); max-width: var(--content-max-width); margin: 0 auto; }
+    .topnav__brand { font-weight: var(--fw-heading); color: var(--color-ink-navy); text-decoration: none; }
+
+    .index-hero {
+      background: var(--color-surface);
+      padding: var(--space-5xl) 0 var(--space-3xl);
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .index-hero h1 { max-width: 18ch; margin-bottom: var(--space-lg); }
+
+    /* Filter / category row */
+    .category-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-xl);
+    }
+    .category-row .chip { cursor: pointer; }
+    .category-row .chip[aria-pressed="true"] {
+      background: var(--color-gravity);
+      color: var(--color-gravity-text);
+      border-color: var(--color-gravity);
+    }
+
+    /* Card grid */
+    .artifact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-xl);
+      margin-top: var(--space-2xl);
+    }
+    .artifact-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+      text-decoration: none;
+      color: var(--color-ink);
+    }
+    .artifact-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-2px); }
+    .artifact-card__cover {
+      aspect-ratio: 16/9;
+      background: var(--color-surface-navy);
+      color: var(--color-ink-inverse);
+      display: flex;
+      align-items: flex-end;
+      padding: var(--space-md);
+      position: relative;
+    }
+    .artifact-card__cover .eyebrow { color: var(--taf-gold-300); margin: 0; }
+    .artifact-card__cover--gold { background: var(--color-surface-gold); color: var(--color-ink); }
+    .artifact-card__cover--gold .eyebrow { color: var(--color-ink-navy); }
+    .artifact-card__cover--photo {
+      background-size: cover;
+      background-position: center;
+      background-image:
+        linear-gradient(180deg, transparent 50%, rgba(11,35,65,0.85) 100%),
+        url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=1600&q=80');
+    }
+    .artifact-card__body {
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      flex: 1;
+    }
+    .artifact-card__body h3 { margin: 0; font-size: var(--fs-xl); }
+    .artifact-card__body p { color: var(--color-ink-secondary); flex: 1; }
+    .artifact-card__meta {
+      font-size: var(--fs-xs);
+      text-transform: uppercase;
+      letter-spacing: var(--ls-eyebrow);
+      color: var(--color-ink-muted);
+      font-weight: var(--fw-semi);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="topnav" aria-label="Primary">
+    <div class="topnav__inner">
+      <a href="/" class="topnav__brand">The Agency Fund</a>
+      <a href="#about" style="font-size: var(--fs-sm); color: var(--color-ink-secondary); text-decoration: none">About →</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="index-hero">
+    <div class="container">
+      <span class="eyebrow">Research Library</span>
+      <h1>Findings, methods, and case studies from <span class="accent-gold">our cohort</span></h1>
+      <p class="lead">A living collection of research artifacts produced by The Agency Fund and our grantees. Filter by sector or format.</p>
+
+      <div class="category-row" role="group" aria-label="Filter by sector">
+        <button class="chip" aria-pressed="true">All</button>
+        <button class="chip" aria-pressed="false">Maternal Health</button>
+        <button class="chip" aria-pressed="false">Agricultural Advisory</button>
+        <button class="chip" aria-pressed="false">Youth Education</button>
+        <button class="chip" aria-pressed="false">Methods</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- GRID -->
+  <main class="section">
+    <div class="container">
+
+      <div class="artifact-grid">
+
+        <a class="artifact-card" href="research-report.html">
+          <div class="artifact-card__cover artifact-card__cover--photo">
+            <span class="eyebrow">Evaluation Report · 2026</span>
+          </div>
+          <div class="artifact-card__body">
+            <span class="artifact-card__meta">12 min read · Maternal Health</span>
+            <h3>What we learned funding family caregivers in maternal health</h3>
+            <p>A twelve-month evaluation across three TAF-backed organizations, with findings, methodology, and recommendations.</p>
+          </div>
+        </a>
+
+        <a class="artifact-card" href="case-study.html">
+          <div class="artifact-card__cover">
+            <span class="eyebrow">Case Study · India</span>
+          </div>
+          <div class="artifact-card__body">
+            <span class="artifact-card__meta">8 min read · Maternal Health</span>
+            <h3>A frontline counselor can change a family’s trajectory</h3>
+            <p>How Noora Health trains family caregivers — and what three program cycles taught us about household-level behavior change.</p>
+          </div>
+        </a>
+
+        <a class="artifact-card" href="briefing-memo.html">
+          <div class="artifact-card__cover artifact-card__cover--gold">
+            <span class="eyebrow">Briefing Memo</span>
+          </div>
+          <div class="artifact-card__body">
+            <span class="artifact-card__meta">4 min read · Maternal Health</span>
+            <h3>Counseling moves outcomes in maternal care</h3>
+            <p>A one-pager for the board: three findings and one recommendation from our 2025–2026 maternal-health cohort evaluation.</p>
+          </div>
+        </a>
+
+        <a class="artifact-card" href="insight-dashboard.html">
+          <div class="artifact-card__cover">
+            <span class="eyebrow">Dashboard · Refreshed Q1 2026</span>
+          </div>
+          <div class="artifact-card__body">
+            <span class="artifact-card__meta">Live data · Maternal Health</span>
+            <h3>Maternal-health cohort at a glance</h3>
+            <p>KPIs, trend charts, and adherence breakdowns refreshed quarterly across three sites.</p>
+          </div>
+        </a>
+
+        <a class="artifact-card" href="#methods">
+          <div class="artifact-card__cover">
+            <span class="eyebrow">Methods Brief</span>
+          </div>
+          <div class="artifact-card__body">
+            <span class="artifact-card__meta">6 min read · Cross-cutting</span>
+            <h3>Co-analysis: a method for evaluating with grantees, not on them</h3>
+            <p>How TAF runs evaluation workshops where the grantee’s research team is a co-author, not a subject.</p>
+          </div>
+        </a>
+
+        <a class="artifact-card" href="#advisory">
+          <div class="artifact-card__cover artifact-card__cover--gold">
+            <span class="eyebrow">Sector Brief · Agricultural Advisory</span>
+          </div>
+          <div class="artifact-card__body">
+            <span class="artifact-card__meta">5 min read · Agricultural Advisory</span>
+            <h3>What chat-based advisory has actually changed for farmers</h3>
+            <p>Cross-cohort findings from three farmer-facing chat advisory programs, including farmer.chat and partners.</p>
+          </div>
+        </a>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- CAPABILITY LIST -->
+  <section class="section section--subtle">
+    <div class="container">
+      <div class="grid grid--split">
+        <div>
+          <span class="eyebrow">What we publish</span>
+          <h2>The shape of our research output</h2>
+        </div>
+        <ul class="capability-list">
+          <li><span class="bullet"></span>Evaluation reports — cohort-level findings, full methodology</li>
+          <li><span class="bullet"></span>Case studies — single-grantee narratives with outcomes</li>
+          <li><span class="bullet"></span>Briefing memos — one-page summaries for funders and boards</li>
+          <li><span class="bullet"></span>Insight dashboards — refreshed KPIs and trend data</li>
+          <li><span class="bullet"></span>Methods briefs — how we evaluate, how we measure, what we ask</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer class="section section--navy-deep section--tight">
+    <div class="container">
+      <span class="eyebrow">The Agency Fund</span>
+      <p style="font-size: var(--fs-sm); color: var(--taf-gold-300); margin-top: var(--space-sm)">© 2026 The Agency Fund · agency.fund</p>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.category-row .chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.category-row .chip').forEach(b => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+      });
+    });
+  </script>
+</body>
+</html>

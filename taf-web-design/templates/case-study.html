@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case Study · The Agency Fund</title>
+  <meta name="description" content="A grantee case study from The Agency Fund.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../tokens.css">
+
+  <style>
+    /* Poster hero with documentary photo */
+    .case-hero {
+      position: relative;
+      min-height: 70vh;
+      /* Replace this URL with a real documentary photo before shipping */
+      background-image:
+        linear-gradient(180deg, transparent 35%, rgba(11,35,65,0.82) 100%),
+        url('https://images.unsplash.com/photo-1631815587646-b85a1bb027e1?auto=format&fit=crop&w=2000&q=80');
+      background-size: cover;
+      background-position: center;
+      color: var(--color-ink-inverse);
+      display: flex;
+      align-items: flex-end;
+      padding: var(--space-4xl) 0;
+    }
+    .case-hero h1 { color: var(--color-ink-inverse); max-width: 22ch; }
+    .case-hero p.lead { color: var(--color-ink-inverse); opacity: 0.92; max-width: 56ch; }
+    .case-hero .eyebrow { color: var(--taf-gold-300); }
+
+    .topnav { position: sticky; top: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--color-border-subtle); z-index: 50; }
+    .topnav__inner { display: flex; align-items: center; justify-content: space-between; padding: var(--space-md) var(--content-padding); max-width: var(--content-max-width); margin: 0 auto; }
+    .topnav__brand { font-weight: var(--fw-heading); color: var(--color-ink-navy); text-decoration: none; }
+
+    /* Outcome panel */
+    .outcome-panel {
+      background: var(--color-gravity-deep);
+      color: var(--color-ink-inverse);
+      border-radius: var(--radius-panel);
+      padding: var(--space-2xl);
+      margin: var(--space-2xl) 0;
+    }
+    .outcome-panel .eyebrow { color: var(--taf-gold-300); }
+    .outcome-panel h2 { color: var(--color-ink-inverse); }
+    .outcome-panel .metric__value { color: var(--color-ink-inverse); }
+    .outcome-panel .metric__label { color: var(--taf-gold-300); }
+
+    /* Image-text alternating sections */
+    .image-text {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+      align-items: center;
+      margin: var(--space-4xl) 0;
+    }
+    @media (min-width: 768px) {
+      .image-text { grid-template-columns: 1fr 1fr; }
+      .image-text--reverse { direction: rtl; }
+      .image-text--reverse > * { direction: ltr; }
+    }
+    .image-text img { border-radius: var(--radius-card); }
+  </style>
+</head>
+<body>
+
+  <nav class="topnav" aria-label="Primary">
+    <div class="topnav__inner">
+      <a href="/" class="topnav__brand">The Agency Fund</a>
+      <a href="#all-cases" style="font-size: var(--fs-sm); color: var(--color-ink-secondary); text-decoration: none">All case studies →</a>
+    </div>
+  </nav>
+
+  <!-- POSTER HERO -->
+  <header class="case-hero">
+    <div class="container">
+      <span class="eyebrow">Case Study · Maternal Health · India</span>
+      <h1>A frontline counselor can <span class="accent-gold">change</span> a family’s trajectory.</h1>
+      <p class="lead">How Noora Health is training family caregivers — and what we learned funding them through three program cycles.</p>
+    </div>
+  </header>
+
+  <!-- INTRO -->
+  <section class="section">
+    <div class="container">
+      <div class="grid grid--split">
+        <div>
+          <span class="eyebrow">The grantee</span>
+          <h2>Noora Health</h2>
+        </div>
+        <div class="prose">
+          <p>Noora Health trains family caregivers — the mothers, sisters, mothers-in-law, husbands — who are present at the moment a discharge happens. The premise is direct: train the person who carries the patient home, not just the patient.</p>
+          <p>The Agency Fund has backed Noora across three program cycles, with $1.2M in unrestricted grant capital and infrastructure support. This page summarizes what we learned.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTCOME PANEL -->
+  <section class="container">
+    <div class="outcome-panel">
+      <span class="eyebrow">By the numbers</span>
+      <h2>Three years, three sites</h2>
+      <div class="grid grid--3" style="margin-top: var(--space-xl)">
+        <div class="metric"><div class="metric__value">142K</div><div class="metric__label">Caregivers trained</div></div>
+        <div class="metric"><div class="metric__value">21%</div><div class="metric__label">Postnatal visit lift</div></div>
+        <div class="metric"><div class="metric__value">$1.2M</div><div class="metric__label">TAF commitment</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BODY: narrative + alternating images -->
+  <section class="section">
+    <div class="container">
+      <article class="prose" style="max-width: 70ch; margin: 0 auto">
+
+        <span class="eyebrow">The story</span>
+        <h2>What changed</h2>
+
+        <p>Before the training, household members watched the patient. After the training, they watched the warning signs. A small shift in language, a large shift in behavior.</p>
+
+        <blockquote class="pull-quote">
+          When a mother-in-law learns the warning signs, the whole household watches differently. We didn’t just train one person — we changed who the household trusts.
+          <cite>Field counselor · Bihar, India</cite>
+        </blockquote>
+
+        <h3>What we funded</h3>
+        <p>Three program cycles. Each cycle: train ~50,000 caregivers across two states, measure behavior change at 3 / 6 / 12 months, refine the curriculum, hand the next cohort the better version.</p>
+
+        <h3>What surprised us</h3>
+        <p>The senior household member — usually a mother-in-law or older sister — was the most consequential trainee. Programs that defaulted to training the patient missed the actual decision-maker.</p>
+
+        <h3>Where it travels</h3>
+        <p>The model is portable: any clinical setting that discharges patients to family care can use it. Two of our other grantees have begun adapting elements of the Noora curriculum for their own contexts.</p>
+
+      </article>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section section--navy">
+    <div class="container">
+      <span class="eyebrow">Read more</span>
+      <h2>The full evaluation report</h2>
+      <p style="max-width: 55ch">A twelve-month evaluation across three TAF-backed organizations, with full methodology, sample sizes, and supplementary materials.</p>
+      <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; margin-top: var(--space-lg)">
+        <a href="#report" class="btn btn--primary">Read the report →</a>
+        <a href="#contact" class="btn btn--outline" style="color: var(--color-ink-inverse); border-color: var(--taf-gold-400)">Talk to the team</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="section section--navy-deep section--tight">
+    <div class="container">
+      <span class="eyebrow">The Agency Fund</span>
+      <p style="font-size: var(--fs-sm); color: var(--taf-gold-300); margin-top: var(--space-sm)">© 2026 The Agency Fund · agency.fund</p>
+    </div>
+  </footer>
+
+</body>
+</html>

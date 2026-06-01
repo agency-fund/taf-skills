@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insight Dashboard · The Agency Fund</title>
+  <meta name="description" content="A data-forward research dashboard from The Agency Fund.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../tokens.css">
+
+  <style>
+    .dash-header {
+      background: var(--color-surface-navy-deep);
+      color: var(--color-ink-inverse);
+      padding: var(--space-3xl) 0 var(--space-2xl);
+    }
+    .dash-header .eyebrow { color: var(--taf-gold-300); }
+    .dash-header h1 { color: var(--color-ink-inverse); max-width: 22ch; }
+    .dash-header p.lead { color: var(--color-ink-inverse); opacity: 0.9; max-width: 56ch; }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-lg);
+      margin-top: var(--space-xl);
+    }
+    .kpi {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+    }
+    .kpi .metric__value { color: var(--color-ink-inverse); }
+    .kpi .metric__label { color: var(--taf-gold-300); }
+    .kpi__delta {
+      display: inline-block;
+      margin-top: var(--space-sm);
+      font-size: var(--fs-sm);
+      font-weight: var(--fw-semi);
+      color: var(--taf-gold-300);
+    }
+    .kpi__delta--up::before { content: "▲ "; }
+    .kpi__delta--down::before { content: "▼ "; color: #e89090; }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+      margin-top: var(--space-2xl);
+    }
+    @media (min-width: 900px) {
+      .chart-grid { grid-template-columns: 2fr 1fr; }
+    }
+    .chart-card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-card);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-card);
+    }
+    .chart-card__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .chart-card canvas { width: 100% !important; height: 280px !important; }
+
+    .narrative {
+      max-width: 70ch;
+      padding: var(--space-xl);
+      background: var(--color-surface-subtle);
+      border-radius: var(--radius-card);
+      border-left: 3px solid var(--color-action);
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      margin-top: var(--space-lg);
+    }
+    .filter-row .chip { cursor: pointer; transition: background var(--transition-fast), border-color var(--transition-fast); }
+    .filter-row .chip:hover { border-color: var(--color-gravity); }
+    .filter-row .chip[aria-pressed="true"] { background: var(--color-gravity); color: var(--color-gravity-text); border-color: var(--color-gravity); }
+  </style>
+</head>
+<body>
+
+  <header class="dash-header">
+    <div class="container">
+      <span class="eyebrow">Insight Dashboard · Updated March 2026</span>
+      <h1>Maternal-health cohort <span class="accent-gold">at a glance</span></h1>
+      <p class="lead">Twelve-month follow-up data across three TAF-backed organizations, refreshed quarterly.</p>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="metric"><div class="metric__value">142K</div><div class="metric__label">Caregivers trained</div></div>
+          <div class="kpi__delta kpi__delta--up">+ 28K this quarter</div>
+        </div>
+        <div class="kpi">
+          <div class="metric"><div class="metric__value">34%</div><div class="metric__label">Adherence lift</div></div>
+          <div class="kpi__delta kpi__delta--up">+ 3 pts vs. Q3</div>
+        </div>
+        <div class="kpi">
+          <div class="metric"><div class="metric__value">21%</div><div class="metric__label">Postnatal visit lift</div></div>
+          <div class="kpi__delta kpi__delta--up">+ 1 pt vs. Q3</div>
+        </div>
+        <div class="kpi">
+          <div class="metric"><div class="metric__value">$4.0M</div><div class="metric__label">Next-round commitment</div></div>
+          <div class="kpi__delta">Approved March 2026</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+
+      <!-- Filters -->
+      <span class="eyebrow">Filter by site</span>
+      <div class="filter-row" role="group" aria-label="Filter by site">
+        <button class="chip" aria-pressed="true">All sites</button>
+        <button class="chip" aria-pressed="false">India · Bihar</button>
+        <button class="chip" aria-pressed="false">Kenya · Kisumu</button>
+        <button class="chip" aria-pressed="false">Nigeria · Kaduna</button>
+      </div>
+
+      <!-- Charts + narrative -->
+      <div class="chart-grid">
+        <div class="chart-card">
+          <div class="chart-card__head">
+            <div>
+              <span class="eyebrow">Trend</span>
+              <h3>Counseling adherence by quarter</h3>
+            </div>
+          </div>
+          <canvas id="trendChart" aria-label="Counseling adherence trend by quarter"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-card__head">
+            <div>
+              <span class="eyebrow">Breakdown</span>
+              <h3>By trained caregiver role</h3>
+            </div>
+          </div>
+          <canvas id="breakdownChart" aria-label="Adherence breakdown by trained caregiver role"></canvas>
+        </div>
+      </div>
+
+      <!-- Narrative -->
+      <div style="margin-top: var(--space-2xl)">
+        <div class="narrative prose">
+          <span class="eyebrow">What the data says</span>
+          <p>Adherence rose steadily across all three sites, with the strongest lift in households where the trained caregiver was a senior family member. The plateau in Q4 2025 reflects program expansion to new districts; trend resumes in Q1 2026.</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="section section--navy-deep section--tight">
+    <div class="container">
+      <span class="eyebrow">The Agency Fund</span>
+      <p style="font-size: var(--fs-sm); color: var(--taf-gold-300); margin-top: var(--space-sm)">Data refreshed quarterly · Methodology in supplementary materials · agency.fund</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script>
+    // TAF chart theming — Montserrat, navy primary, single gold highlight, neutral comparators
+    Chart.defaults.font.family = "'Montserrat', sans-serif";
+    Chart.defaults.font.size = 13;
+    Chart.defaults.color = '#495057';
+    Chart.defaults.borderColor = '#DEE2E6';
+
+    const NAVY  = '#003366';
+    const GOLD  = '#F1B505';
+    const MUTED = '#CED4DA';
+
+    // Trend chart (line)
+    new Chart(document.getElementById('trendChart'), {
+      type: 'line',
+      data: {
+        labels: ['Q1 ’25','Q2 ’25','Q3 ’25','Q4 ’25','Q1 ’26'],
+        datasets: [
+          { label: 'Adherence (treated)', data: [42, 48, 55, 58, 62],
+            borderColor: NAVY, backgroundColor: NAVY, borderWidth: 2.5, tension: 0.3, pointRadius: 4 },
+          { label: 'Adherence (control)', data: [40, 41, 42, 43, 44],
+            borderColor: MUTED, backgroundColor: MUTED, borderWidth: 2, borderDash: [4,4], tension: 0.3, pointRadius: 3 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } },
+        scales: {
+          y: { beginAtZero: false, ticks: { callback: v => v + '%' }, grid: { color: '#E9ECEF' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+
+    // Breakdown chart (horizontal bar) — gold highlight on the strongest segment
+    new Chart(document.getElementById('breakdownChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Mother-in-law','Spouse','Sibling','Patient only'],
+        datasets: [{
+          label: 'Adherence lift',
+          data: [42, 31, 28, 18],
+          backgroundColor: [GOLD, NAVY, NAVY, MUTED],
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { callback: v => v + '%' }, grid: { color: '#E9ECEF' } },
+          y: { grid: { display: false } }
+        }
+      }
+    });
+
+    // Filter chip toggle (UI-only; wire to data in production)
+    document.querySelectorAll('.filter-row .chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-row .chip').forEach(b => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Report · The Agency Fund</title>
+  <meta name="description" content="A long-form research report from The Agency Fund.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- For deployment, inline the contents of tokens.css here -->
+  <link rel="stylesheet" href="../tokens.css">
+
+  <style>
+    /* Page-specific layout: sidebar + main column for long-form */
+    .report-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-2xl);
+    }
+    @media (min-width: 1024px) {
+      .report-grid {
+        grid-template-columns: 220px 1fr;
+        gap: var(--space-4xl);
+      }
+    }
+    .report-section { scroll-margin-top: 96px; }
+    .report-section + .report-section { margin-top: var(--space-4xl); }
+
+    /* Hero */
+    .report-hero {
+      background: var(--color-surface-navy-deep);
+      color: var(--color-ink-inverse);
+      padding: var(--space-5xl) 0 var(--space-4xl);
+    }
+    .report-hero .eyebrow { color: var(--taf-gold-300); }
+    .report-hero h1 { color: var(--color-ink-inverse); max-width: 18ch; margin-bottom: var(--space-lg); }
+    .report-hero p.lead { color: var(--color-ink-inverse); opacity: 0.85; max-width: 60ch; }
+    .report-meta {
+      margin-top: var(--space-2xl);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xl);
+      font-size: var(--fs-sm);
+      color: var(--taf-gold-300);
+    }
+    .report-meta dt {
+      text-transform: uppercase;
+      letter-spacing: var(--ls-eyebrow);
+      font-weight: var(--fw-semi);
+      font-size: var(--fs-xs);
+      color: var(--taf-gold-300);
+      margin-bottom: var(--space-xs);
+    }
+    .report-meta dd { margin: 0; color: var(--color-ink-inverse); font-weight: var(--fw-medium); }
+
+    /* Sticky nav */
+    .topnav {
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--color-border-subtle);
+      z-index: 50;
+    }
+    .topnav__inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-md) var(--content-padding);
+      max-width: var(--content-max-width); margin: 0 auto;
+    }
+    .topnav__brand { font-weight: var(--fw-heading); color: var(--color-ink-navy); text-decoration: none; }
+    .topnav__links { display: none; gap: var(--space-lg); font-size: var(--fs-sm); }
+    .topnav__links a { color: var(--color-ink-secondary); text-decoration: none; }
+    .topnav__links a:hover { color: var(--color-gravity); }
+    @media (min-width: 768px) { .topnav__links { display: flex; } }
+  </style>
+</head>
+<body>
+
+  <nav class="topnav" aria-label="Primary">
+    <div class="topnav__inner">
+      <a href="/" class="topnav__brand">The Agency Fund</a>
+      <div class="topnav__links">
+        <a href="#summary">Summary</a>
+        <a href="#findings">Findings</a>
+        <a href="#method">Method</a>
+        <a href="#references">References</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header class="report-hero">
+    <div class="container">
+      <span class="eyebrow">Evaluation Report · 2026</span>
+      <h1>What we learned funding <span class="accent-gold">family caregivers</span> in maternal health</h1>
+      <p class="lead">A twelve-month evaluation across three TAF-backed organizations, asking whether structured counseling shifts behavior at the household level.</p>
+
+      <dl class="report-meta">
+        <div>
+          <dt>Author</dt>
+          <dd>Research Team, TAF</dd>
+        </div>
+        <div>
+          <dt>Published</dt>
+          <dd>March 2026</dd>
+        </div>
+        <div>
+          <dt>Sector</dt>
+          <dd>Maternal Health</dd>
+        </div>
+        <div>
+          <dt>Read time</dt>
+          <dd>12 minutes</dd>
+        </div>
+      </dl>
+    </div>
+  </header>
+
+  <!-- BODY -->
+  <main class="container section">
+    <div class="report-grid">
+
+      <!-- Sticky TOC -->
+      <aside class="toc" aria-label="Table of contents">
+        <span class="eyebrow">On this page</span>
+        <ul>
+          <li><a href="#summary">Summary</a></li>
+          <li><a href="#background">Background</a></li>
+          <li><a href="#method">Method</a></li>
+          <li><a href="#findings">Findings</a></li>
+          <li><a href="#discussion">Discussion</a></li>
+          <li><a href="#recommendation">Recommendation</a></li>
+          <li><a href="#references">References</a></li>
+        </ul>
+      </aside>
+
+      <!-- Main column -->
+      <article class="prose" style="max-width: 70ch">
+
+        <section id="summary" class="report-section">
+          <span class="eyebrow">Summary</span>
+          <h2>One paragraph</h2>
+          <p class="lead">Counseling adherence rose 34%, postnatal visits rose 21%, and behavior change persisted at the 12-month follow-up — across all three sites, with stronger effects where the household primary caregiver (not just the patient) received training.</p>
+        </section>
+
+        <section id="background" class="report-section">
+          <span class="eyebrow">Background</span>
+          <h2>What we set out to measure</h2>
+          <p>Ample research demonstrates that well-tailored counseling and coaching can enable people to unlock remarkable outcomes. Less is known about <strong>who</strong> in the household needs to receive the counseling for change to take root. This evaluation asked that question across three TAF-backed organizations.</p>
+          <p>Each organization was already running a counseling program. We co-designed an evaluation that measured both the patient-level adherence and the household-level practices — recognition of warning signs, escalation behavior, postnatal visit attendance.</p>
+        </section>
+
+        <section id="method" class="report-section">
+          <span class="eyebrow">Method</span>
+          <h2>How we ran it</h2>
+          <ul class="capability-list" style="margin: var(--space-lg) 0">
+            <li><span class="bullet"></span>Semi-structured interviews with 42 frontline counselors</li>
+            <li><span class="bullet"></span>Pre/post survey instrument across three sites</li>
+            <li><span class="bullet"></span>Administrative data on visit attendance and clinical outcomes</li>
+            <li><span class="bullet"></span>Co-analysis workshop with each grantee’s research team</li>
+          </ul>
+          <p>Sample sizes ranged from 380 to 720 households per site. The full methodology, including the survey instrument, lives in the supplementary materials.</p>
+        </section>
+
+        <section id="findings" class="report-section">
+          <span class="eyebrow">Findings</span>
+          <h2>Three things changed</h2>
+
+          <h3 style="margin-top: var(--space-xl)">Counseling adherence rose 34%</h3>
+          <p>Households with a trained family caregiver completed a full counseling sequence at a substantially higher rate than the control group. The effect was largest in households where the counselor was a mother-in-law or older sibling.<sup><a href="#fn1">1</a></sup></p>
+
+          <h3 style="margin-top: var(--space-xl)">Postnatal visits up 21%</h3>
+          <p>Trained caregivers reported faster recognition of warning signs, leading to earlier postnatal visits across all three sites. This was the strongest single behavioral indicator and the one most likely to persist.</p>
+
+          <h3 style="margin-top: var(--space-xl)">Sustained at 12 months</h3>
+          <p>Behavior change persisted at the 12-month follow-up, suggesting durable household-level practice change — not just a Hawthorne-style response to being studied.<sup><a href="#fn2">2</a></sup></p>
+
+          <blockquote class="pull-quote">
+            When a mother-in-law learns the warning signs, the whole household watches differently. We didn’t just train one person — we changed who the household trusts.
+            <cite>Field counselor · Bihar, India</cite>
+          </blockquote>
+        </section>
+
+        <section id="discussion" class="report-section">
+          <span class="eyebrow">Discussion</span>
+          <h2>Why this matters for funders</h2>
+          <p>The household, not the patient, is the unit of behavior change in maternal health. This shifts how we evaluate counseling programs and where we direct capital. Programs that train a single point of contact per household — typically the patient — leave the most consequential decision-makers untrained.</p>
+          <p>This finding is not novel in the academic literature, but it is novel in the way TAF-backed organizations now operationalize counseling. Two of the three grantees have already adjusted their training curricula in response.</p>
+        </section>
+
+        <section id="recommendation" class="report-section">
+          <span class="eyebrow">Recommendation</span>
+          <h2>Where we’re directing the <span class="accent-gold">next round</span></h2>
+          <p>Double down on family-caregiver training as a unit of investment, not just the patient or the counselor. The data is clear; the model travels. We expect to commit an additional $4M across this cohort over the next two years.</p>
+          <div style="display: flex; gap: var(--space-md); flex-wrap: wrap; margin-top: var(--space-lg)">
+            <a href="#contact" class="btn btn--primary">Talk to the team →</a>
+            <a href="#download" class="btn btn--outline">Download the PDF</a>
+          </div>
+        </section>
+
+        <section id="references" class="report-section">
+          <span class="eyebrow">References</span>
+          <h2>Sources cited</h2>
+          <ol class="footnote-list">
+            <li id="fn1">Researcher, A., &amp; Researcher, B. (2024). <strong>Household training and counseling adherence in maternal health.</strong> Journal of Global Health, 14(2), 123–145.</li>
+            <li id="fn2">TAF Research Team (2025). <strong>Twelve-month follow-up protocol for maternal-health cohort.</strong> The Agency Fund, internal methods document.</li>
+            <li id="fn3">Organization (2025). <strong>Quarterly report Q3 2025.</strong> Retrieved from organization.org/q3-2025.</li>
+          </ol>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="section section--navy-deep">
+    <div class="container">
+      <span class="eyebrow">The Agency Fund</span>
+      <p style="max-width: 50ch">We discover, accelerate, and mobilize organizations that help people navigate difficult lives.</p>
+      <p style="font-size: var(--fs-sm); color: var(--taf-gold-300); margin-top: var(--space-lg)">© 2026 The Agency Fund · agency.fund</p>
+    </div>
+  </footer>
+
+</body>
+</html>
