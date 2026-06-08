@@ -1,0 +1,87 @@
+/* TAF/AWC deck system — shared tokens + components. Derived from approved showcase. */
+:root {
+  --navy: #003366;
+  --navy-deep: #0B2341;
+  --navy-deepest: #061A2E;
+  --gold: #F1B505;
+  --gold-warm: #ECAA00;
+  --white: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-subtle: #F8F9FA;
+  --ink: #212529;
+  --ink-secondary: #495057;
+  --ink-muted: #868E96;
+  --border: #DEE2E6;
+  --slate-blue: #6699CC; /* muted eyebrow on navy */
+  --font: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --shadow-md: 0 4px 8px hsl(210 50% 20% / 0.08);
+}
+* { box-sizing: border-box; }
+body {
+  width: 1920px; height: 1080px; margin: 0; overflow: hidden;
+  font-family: var(--font);
+  background: var(--surface-subtle);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.slide {
+  width: 1920px; height: 1080px;
+  padding: 96px 120px 88px;
+  display: flex; flex-direction: column;
+}
+/* Light-slide chrome */
+.eyebrow {
+  font-size: 22px; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-muted);
+  margin: 0 0 24px;
+}
+h1 {
+  margin: 0;
+  font-size: 60px; font-weight: 800; line-height: 1.12;
+  letter-spacing: -0.015em; color: var(--navy);
+  max-width: 1500px;
+}
+h1 .accent { color: var(--gold); }
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+}
+/* Logo chip (tool slides) */
+.logo-wrap {
+  width: 92px; height: 92px; border-radius: 12px;
+  background: var(--navy-deep);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.logo-wrap svg { width: 52px; height: 52px; display: block; }
+.logo-wrap svg, .logo-wrap svg path { fill: var(--white); }
+/* Gold-bar footnote */
+.footnote {
+  margin-top: 52px;
+  display: flex; align-items: flex-start; gap: 20px;
+  font-size: 25px; font-weight: 400; line-height: 1.45;
+  color: var(--ink-secondary);
+  max-width: 1560px;
+}
+.footnote .mark { width: 6px; align-self: stretch; background: var(--gold); border-radius: 3px; flex-shrink: 0; }
+/* Numbered steps (activity slides) */
+.step { display: flex; gap: 32px; align-items: flex-start; }
+.step .num {
+  font-size: 44px; font-weight: 900; color: var(--gold);
+  line-height: 1; flex-shrink: 0; font-variant-numeric: tabular-nums;
+}
+.step .text { font-size: 28px; line-height: 1.45; color: var(--ink); }
+/* Dark (navy) slides — dividers, cover */
+body.dark { background: var(--navy-deep); color: var(--white); }
+body.dark .eyebrow { color: var(--slate-blue); }
+body.dark h1 { color: var(--white); }
+/* Wordmark row (top of dark slides) */
+.wordmark {
+  display: flex; align-items: center; gap: 18px;
+  font-size: 20px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--white);
+}
+.wordmark::before { content: ''; width: 56px; height: 6px; background: var(--gold); border-radius: 3px; }

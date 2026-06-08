@@ -1,0 +1,9 @@
+/* Montserrat variable font (latin subset), self-hosted to avoid font-swap flashes between slides.
+   font-display: block keeps fallback text invisible during the (local, near-instant) load. */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: block;
+  src: url(fonts/montserrat-var.woff2) format('woff2');
+}

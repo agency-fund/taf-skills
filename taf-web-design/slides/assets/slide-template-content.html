@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Slide title</title>
+<!-- Adjust the relative depth if slides live in a subfolder (e.g. shared/ alongside). -->
+<link rel="stylesheet" href="shared/fonts.css">
+<link rel="stylesheet" href="shared/anim.css">
+<link rel="stylesheet" href="shared/taf.css">
+<style>
+  /* Slide-specific styles. Use a unique class prefix to avoid collisions. */
+  h1 { font-size: 56px; max-width: 1600px; }
+  .cards { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; flex: 1; }
+  .ex-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-md); padding: 40px 44px; }
+  .ex-card .t { font-size: 32px; font-weight: 800; color: var(--navy); margin: 0 0 12px; }
+  .ex-card .d { font-size: 26px; font-weight: 400; color: var(--ink-secondary); line-height: 1.4; margin: 0; }
+</style>
+</head>
+<body>
+  <div class="slide">
+    <p class="eyebrow" data-reveal>Section &middot; Eyebrow</p>
+    <h1 data-reveal>An assertion-style title with one <span class="accent">gold accent</span></h1>
+
+    <div class="cards">
+      <div class="ex-card hoverable" data-reveal>
+        <p class="t">First point</p>
+        <p class="d">Supporting sentence in full, plain prose. No em dashes.</p>
+      </div>
+      <div class="ex-card hoverable" data-reveal>
+        <p class="t">Second point</p>
+        <p class="d">Supporting sentence in full, plain prose.</p>
+      </div>
+    </div>
+
+    <div class="footnote" data-reveal>
+      <span class="mark"></span>
+      <span>One closing sentence that earns the slide.</span>
+    </div>
+  </div>
+<script src="shared/anim.js"></script>
+<script>
+/* Deck-shell integration: forward navigation keys + font-ready state to the parent
+   shell (direct cross-iframe access is blocked under file://). Keep this verbatim. */
+(function () {
+  if (window.parent === window) return;
+  document.addEventListener('keydown', function (e) {
+    var nav = ['ArrowRight', 'ArrowLeft', ' ', 'PageDown', 'PageUp', 'Home', 'End', 'Escape'];
+    if (nav.indexOf(e.key) !== -1 || /^[1-9]$/.test(e.key) || e.key === 'p' || e.key === 'P') {
+      e.preventDefault();
+      window.parent.postMessage({ deckKey: e.key }, '*');
+    }
+  });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { window.parent.postMessage({ deckFontsReady: true }, '*'); });
+  } else { window.parent.postMessage({ deckFontsReady: true }, '*'); }
+})();
+</script>
+</body>
+</html>

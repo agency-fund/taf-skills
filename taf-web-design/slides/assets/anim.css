@@ -1,0 +1,58 @@
+/* Within-slide entrance animation system.
+   Usage: add data-reveal to any element. anim.js assigns staggered delays in
+   DOM order and sets body.anim-go one frame after load. Elements rest at their
+   final state when ?static=1 is present or when printing (PDF export). */
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(26px);
+}
+body.anim-go [data-reveal] {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.55s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+/* variants */
+[data-reveal="left"]  { transform: translateX(-30px); }
+[data-reveal="right"] { transform: translateX(30px); }
+[data-reveal="scale"] { transform: scale(0.94); }
+body.anim-go [data-reveal="left"],
+body.anim-go [data-reveal="right"] { transform: translateX(0); }
+body.anim-go [data-reveal="scale"] { transform: scale(1); }
+
+/* Growing bars/lines: set the final inline width/height as a CSS var
+   (--grow-w / --grow-h) or let anim.js read the inline style. */
+[data-grow-w] { width: 0 !important; }
+body.anim-go [data-grow-w] {
+  width: var(--grow-w) !important;
+  transition: width 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+[data-grow-h] { height: 0 !important; }
+body.anim-go [data-grow-h] {
+  height: var(--grow-h) !important;
+  transition: height 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+/* Static / print: everything at rest, instantly. */
+body.anim-static [data-reveal],
+body.anim-static [data-grow-w],
+body.anim-static [data-grow-h] { transition: none !important; }
+@media print {
+  [data-reveal] { opacity: 1 !important; transform: none !important; transition: none !important; }
+  [data-grow-w] { width: var(--grow-w) !important; transition: none !important; }
+  [data-grow-h] { height: var(--grow-h) !important; transition: none !important; }
+}
+
+/* Gentle hover lift for interactive cards (used by tool slides). */
+.hoverable {
+  transition: transform 0.22s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.22s;
+}
+.hoverable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px hsl(210 50% 20% / 0.14);
+}

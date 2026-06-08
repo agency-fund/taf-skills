@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI & Knowledge Management for Researchers — Workshop Deck</title>
+<!--
+  deck_index.html — multi-file slide deck shell · dual overview modes
+
+  Overview (default entry; mode picked by getSeconds()%5: 20% gallery / 80% grid):
+   · grid: adaptive grid wall — columns adapt to page count + viewport; more rows flatten the tilt; scale-to-fit centered (no overflow/distortion at any page count)
+   · gallery: infinite gallery — fixed card size, seamless infinite tiling + slow drift + slight breathing; one tile holds all pages (shuffled) so nothing repeats until all are seen
+  Present mode: single-page fit scaling with paging. ESC / ⊞ returns to overview.
+  Performance: each manifest entry may carry a thumb (pre-rendered thumbnail); overview then tiles <img> instead of loading N iframes.
+
+  Usage: copy as index.html; put one standalone HTML per page in slides/; edit MANIFEST.
+  Optional override: window.DECK_OVERVIEW = 'grid' | 'gallery' (random if unset); URL ?ov=grid|gallery forces temporarily.
+  Keyboard (present): ← / → / Space / PgUp / PgDown / Home / End / 1-9 / P print / ESC back to overview
+-->
+<script>
+  // One entry per slide, in display order. The label appears in the overview wall
+  // and the present-mode counter. Edit this list to match the files in slides/.
+  window.DECK_MANIFEST = [
+    { file: "slides/01-cover.html",   label: "Cover" },
+    { file: "slides/02-divider.html", label: "Part 1" },
+    { file: "slides/03-content.html", label: "First point" },
+    // ...add the rest of your slides here, in order...
+    { file: "slides/NN-closing.html", label: "Closing" },
+  ];
+  window.DECK_WIDTH = 1920;
+  window.DECK_HEIGHT = 1080;
+  window.GALLERY_CARD_W = 300;       // gallery card base width
+  window.GALLERY_DRIFT_SECONDS = 80; // gallery drift cycle duration
+  window.DECK_OVERVIEW = 'grid';  // pinned: gallery mode needs pre-rendered thumbs; without them it spawns dozens of live iframes and flickers
+</script>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; font-family: -apple-system, "PingFang SC", sans-serif; background: #0a0a0a; }
+
+  .overview { position: fixed; inset: 0; }
+  body[data-mode="present"] .overview { display: none; }
+  body[data-mode="present"] .start-btn { display: none; }
+  body[data-mode="overview"] #present-ui { display: none; }
+  body[data-ov="grid"]    #ov-gallery { display: none; }
+  body[data-ov="gallery"] #ov-grid    { display: none; }
+  body[data-ov="gallery"][data-mode="overview"] { background: #0a0805; }
+  body[data-ov="grid"][data-mode="overview"]    { background: #061A2E; }
+
+  /* Animated tech background (fixed layers behind the wall, so they don't scroll).
+     Negative z-index keeps them above the navy base but behind the cards. */
+  body[data-ov="grid"][data-mode="overview"]::before,
+  body[data-ov="grid"][data-mode="overview"]::after {
+    content: ''; position: fixed; inset: -25%; z-index: -1; pointer-events: none;
+  }
+  body[data-ov="grid"][data-mode="overview"]::before {
+    background-image:
+      linear-gradient(rgba(102,153,204,0.13) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(102,153,204,0.13) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(115% 95% at 50% 38%, #000 52%, transparent 100%);
+            mask-image: radial-gradient(115% 95% at 50% 38%, #000 52%, transparent 100%);
+    animation: grid-pan 26s linear infinite;
+  }
+  body[data-ov="grid"][data-mode="overview"]::after {
+    background:
+      radial-gradient(38% 48% at 18% 22%, rgba(241,181,5,0.12), transparent 70%),
+      radial-gradient(46% 56% at 82% 72%, rgba(51,102,153,0.34), transparent 72%),
+      radial-gradient(52% 60% at 60% 14%, rgba(11,35,65,0.5), transparent 72%);
+    animation: glow-drift 30s ease-in-out infinite alternate;
+  }
+  @keyframes grid-pan { from { background-position: 0 0, 0 0; } to { background-position: 56px 56px, 56px 56px; } }
+  @keyframes glow-drift {
+    from { transform: translate3d(-2.5%, -1.5%, 0) scale(1.04); }
+    to   { transform: translate3d(2.5%, 1.5%, 0) scale(1.12); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    body[data-ov="grid"][data-mode="overview"]::before,
+    body[data-ov="grid"][data-mode="overview"]::after { animation: none; }
+  }
+
+  /* ════════ Mode 1 · adaptive grid wall (flat, horizontally aligned; scale-to-fit or vertical scroll) ════════ */
+  #ov-grid { display: flex; justify-content: center; background: transparent; }
+  body[data-grid="fit"]    #ov-grid { overflow: hidden;   align-items: center; }
+  body[data-grid="scroll"] #ov-grid { overflow-y: auto; overflow-x: hidden; align-items: flex-start; padding: 74px 0 110px; }
+  .wall-wrap { }
+  body[data-grid="fit"]    .wall-wrap { transform: translateY(-2vh); }
+  .wall { display: grid; gap: 24px; transform-origin: center center; margin: 0 auto; }
+  #ov-grid .card {
+    position: relative; aspect-ratio: 16/9; border-radius: 9px; overflow: hidden; background: #fff; cursor: pointer;
+    box-shadow: 0 14px 34px rgba(0,0,0,0.42), 0 2px 8px rgba(0,0,0,0.3);
+    transition: transform .28s cubic-bezier(.2,.7,.2,1), box-shadow .28s;
+  }
+  #ov-grid .card:hover {
+    transform: scale(1.12);
+    box-shadow: 0 36px 80px rgba(0,0,0,0.55), 0 0 0 2px rgba(241,181,5,0.55), 0 10px 28px rgba(0,0,0,0.4); z-index: 20;
+  }
+
+  /* ════════ Mode 2 · infinite gallery ════════ */
+  #ov-gallery { overflow: hidden; perspective: 2200px; perspective-origin: 50% 42%;
+    background: radial-gradient(130% 120% at 50% 38%, #1b1610, #0a0805 82%); }
+  .stage3d { --rx: 18; --rz: 9; position: absolute; inset: 0; transform-style: preserve-3d; transform: scale(1.22) rotateX(18deg) rotateZ(-9deg); transform-origin: center center; }
+  .breathe { position: absolute; inset: 0; animation: breathe 26s ease-in-out infinite; transform-origin: center center; transform-style: preserve-3d; }
+  .drift-layer { position: absolute; top: 0; left: 0; will-change: transform; animation: drift var(--driftSec, 80s) linear infinite; transform-style: preserve-3d; }
+  #ov-gallery:hover .drift-layer { animation-play-state: paused; }
+  .gallery { display: grid; }
+  #ov-gallery .card {
+    position: relative; width: 100%; aspect-ratio: 16/9; border-radius: 8px; overflow: hidden; background: #fff; cursor: pointer;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.42), 0 3px 9px rgba(0,0,0,0.3);
+    transition: transform .34s cubic-bezier(.2,.7,.2,1), box-shadow .34s; transform-style: preserve-3d; will-change: transform;
+  }
+  #ov-gallery .card:hover {
+    transform: translateZ(60px) rotateX(calc(var(--rx,18)*-1deg)) rotateZ(calc(var(--rz,9)*1deg)) scale(1.06);
+    box-shadow: 0 30px 64px rgba(0,0,0,0.55), 0 8px 20px rgba(0,0,0,0.4); z-index: 30;
+  }
+  .vignette { position: fixed; inset: 0; pointer-events: none; z-index: 20; box-shadow: inset 0 0 240px 70px rgba(8,6,3,0.62); }
+  @keyframes drift { from { transform: translate3d(0,0,0); } to { transform: translate3d(calc(var(--dx)*-1), calc(var(--dy)*-1), 0); } }
+  @keyframes breathe { 0%,100% { transform: scale(1.0); } 50% { transform: scale(1.045); } }
+
+  /* shared card content */
+  .card .thumb { position: absolute; top: 0; left: 0; width: 1920px; height: 1080px; transform-origin: top left; pointer-events: none; }
+  .card .thumb iframe { width: 1920px; height: 1080px; border: 0; display: block; background: #fff; pointer-events: none; }
+  .card .thumb-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+  .card .num { position: absolute; bottom: 6px; left: 7px; background: rgba(16,12,7,0.76); color: #fff; font-size: 11px; line-height: 1; padding: 4px 7px; border-radius: 5px; font-variant-numeric: tabular-nums; letter-spacing: 0.03em; z-index: 3; pointer-events: none; max-width: 90%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #ov-gallery .card .num { opacity: 0; transition: opacity .25s; }
+  #ov-gallery .card:hover .num { opacity: 1; }
+
+  .overview-title { position: fixed; top: 24px; left: 0; right: 0; text-align: center; font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase; z-index: 40; pointer-events: none; }
+  body[data-ov="grid"]    .overview-title { color: rgba(199,209,225,0.75); text-shadow: 0 2px 12px rgba(0,0,0,0.5); }
+  body[data-ov="gallery"] .overview-title { color: rgba(244,238,224,0.7); text-shadow: 0 2px 12px rgba(0,0,0,0.6); }
+
+  .start-btn { position: fixed; bottom: 26px; right: 26px; border: 0; padding: 13px 24px; border-radius: 999px; font-size: 15px; font-family: inherit; letter-spacing: 0.04em; cursor: pointer; z-index: 200; transition: transform .18s, box-shadow .18s; }
+  body[data-ov="grid"]    .start-btn { background: #F1B505; color: #0B2341; font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+  body[data-ov="gallery"] .start-btn { background: #f4eee0; color: #1a1712; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+  .start-btn:hover { transform: translateY(-2px); }
+
+  /* ════════ present mode ════════ */
+  #stage { position: fixed; top: 50%; left: 50%; transform-origin: top left; will-change: transform; background: #fff; box-shadow: 0 10px 60px rgba(0,0,0,0.4); }
+  #stage iframe { width: 100%; height: 100%; border: 0; display: block; background: #fff;
+    opacity: 1; transform: translateX(0) scale(1);
+    transition: opacity .3s cubic-bezier(.2,.7,.2,1), transform .3s cubic-bezier(.2,.7,.2,1); }
+  #stage iframe.loading { opacity: 0; transition: none; }
+  #stage iframe.loading.enter-next { transform: translateX(44px) scale(0.992); }
+  #stage iframe.loading.enter-prev { transform: translateX(-44px) scale(0.992); }
+  #stage iframe.loading.enter-jump { transform: scale(0.97); }
+  .counter { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.65); color: #fff; padding: 6px 14px; border-radius: 999px; font-size: 13px; letter-spacing: 0.05em; font-variant-numeric: tabular-nums; z-index: 100; opacity: 0.7; }
+  .counter .label { color: rgba(255,255,255,0.7); margin-left: 8px; }
+  .overview-btn { position: fixed; top: 20px; left: 20px; background: rgba(0,0,0,0.55); color: rgba(255,255,255,0.85); border: 0; padding: 7px 14px; border-radius: 999px; font-size: 13px; font-family: inherit; cursor: pointer; z-index: 100; opacity: 0.6; }
+  .overview-btn:hover { opacity: 1; }
+  .nav-zone { position: fixed; top: 0; bottom: 0; width: 15%; cursor: pointer; z-index: 50; }
+  .nav-zone.left { left: 0; } .nav-zone.right { right: 0; }
+  .nav-hint { position: absolute; top: 50%; transform: translateY(-50%); width: 64px; height: 64px; border-radius: 999px; background: rgba(11,35,65,0.55); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; line-height: 1; opacity: 0; transition: opacity .2s, background .2s; box-shadow: 0 2px 12px rgba(0,0,0,0.35); }
+  .nav-zone.left .nav-hint { left: 24px; } .nav-zone.right .nav-hint { right: 24px; }
+  body[data-mode="present"]:hover .nav-hint { opacity: 0.75; }
+  .nav-zone:hover .nav-hint { opacity: 1; background: rgba(11,35,65,0.85); }
+
+  @media print {
+    @page { size: 1920px 1080px; margin: 0; }
+    html, body { background: #fff; overflow: visible; height: auto; }
+    body[data-mode] .overview { display: none !important; }
+    #stage { position: static; transform: none !important; box-shadow: none; }
+    .counter, .nav-zone, .overview-btn, .start-btn { display: none !important; }
+    .print-stack { display: block; }
+    .print-stack iframe { width: 1920px; height: 1080px; page-break-after: always; display: block; }
+  }
+</style>
+</head>
+<body data-mode="overview">
+
+<div id="ov-grid" class="overview">
+  <div class="overview-title">Overview · Click any slide to present</div>
+  <div class="wall-wrap"><div class="wall" id="wall"></div></div>
+</div>
+
+<div id="ov-gallery" class="overview">
+  <div class="stage3d"><div class="breathe"><div class="drift-layer" id="driftLayer"><div class="gallery" id="gallery"></div></div></div></div>
+  <div class="vignette"></div>
+  <div class="overview-title">Infinite Gallery · Hover to pause · Click any slide to present</div>
+</div>
+
+<button class="start-btn" id="startBtn">▶ Start presenting</button>
+
+<div id="present-ui">
+  <div id="stage"><iframe id="frame" src="about:blank"></iframe></div>
+  <button class="overview-btn" id="overviewBtn">⊞ Overview</button>
+  <div class="nav-zone left"  id="navL"><div class="nav-hint">‹</div></div>
+  <div class="nav-zone right" id="navR"><div class="nav-hint">›</div></div>
+  <div class="counter" id="counter">1 / 1</div>
+</div>
+
+<div class="print-stack" id="printStack" style="display:none;"></div>
+
+<script>
+(function () {
+  const W = window.DECK_WIDTH || 1920;
+  const H = window.DECK_HEIGHT || 1080;
+  const deck = window.DECK_MANIFEST || [];
+  const CARD_W = window.GALLERY_CARD_W || 300;
+  const DRIFT_SEC = window.GALLERY_DRIFT_SECONDS || 80;
+  const stage = document.getElementById('stage');
+  const frame = document.getElementById('frame');
+  const counter = document.getElementById('counter');
+  const printStack = document.getElementById('printStack');
+  const wall = document.getElementById('wall');
+  const gallery = document.getElementById('gallery');
+  const driftLayer = document.getElementById('driftLayer');
+  const storageKey = 'deck-index-' + location.pathname;
+  let current = 0;
+
+  stage.style.width = W + 'px'; stage.style.height = H + 'px';
+  driftLayer.style.setProperty('--driftSec', DRIFT_SEC + 's');
+
+  // overview mode: URL ?ov= > window.DECK_OVERVIEW > random (sec%5==0 → 20% gallery)
+  const qp = new URLSearchParams(location.search).get('ov');
+  // when unspecified, random by seconds: grid (real iframe pages) 60% / infinite gallery (image thumbnails) 40%. Pin via ?ov=grid|gallery or window.DECK_OVERVIEW.
+  const OVERVIEW = qp || window.DECK_OVERVIEW || ((new Date().getSeconds() % 5 < 2) ? 'gallery' : 'grid');
+  document.body.setAttribute('data-ov', OVERVIEW === 'gallery' ? 'gallery' : 'grid');
+
+  function setMode(mode) {
+    document.body.setAttribute('data-mode', mode);
+    if (mode === 'present') { fit(); show(current); }
+    else { requestAnimationFrame(buildOverview); }
+  }
+
+  /* ─ media (thumbnail preferred, else iframe) ─ */
+  function makeCard(idx, useScale, useImg) {
+    const card = document.createElement('div');
+    card.className = 'card'; card.dataset.idx = idx;
+    const item = deck[idx];
+    if (useImg && item.thumb) {
+      // gallery only: pre-rendered thumbnails to handle infinite-tiling performance
+      const im = document.createElement('img');
+      im.className = 'thumb-img'; im.src = item.thumb; im.decoding = 'async';
+      card.appendChild(im);
+    } else {
+      // grid default: real HTML subpages (sharp, WYSIWYG)
+      const thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      if (useScale != null) thumb.style.transform = 'scale(' + useScale + ')';
+      const ifr = document.createElement('iframe');
+      ifr.src = item.file; ifr.setAttribute('scrolling', 'no');
+      thumb.appendChild(ifr); card.appendChild(thumb);
+    }
+    const num = document.createElement('div');
+    num.className = 'num';
+    num.textContent = (idx + 1) + (item.label ? ' · ' + item.label : '');
+    card.appendChild(num);
+    card.addEventListener('click', () => { current = idx; setMode('present'); });
+    return card;
+  }
+
+  function buildOverview() {
+    if (document.body.getAttribute('data-mode') !== 'overview') return;
+    if (OVERVIEW === 'gallery') buildGallery(); else buildGrid();
+  }
+
+  /* ════════ grid wall (adaptive) ════════ */
+  function buildGrid() {
+    const n = deck.length; if (!n) return;
+    wall.innerHTML = '';
+    for (let i = 0; i < n; i++) wall.appendChild(makeCard(i, null, false));  // grid = real iframe pages
+    layoutWall();
+  }
+  const GRID_PAD = 74;  // #ov-grid scroll top padding, used to compute the dynamic transform-origin
+  function layoutWall() {
+    const n = deck.length; if (!n) return;
+    const vw = innerWidth, vh = innerHeight, gap = 26;
+    const availW = vw * 0.86;                                   // horizontal margin for rotateZ (no clipping even at strong diagonals)
+    const target = 280;
+    let cols = Math.max(3, Math.min(9, Math.floor((availW + gap) / (target + gap))));
+    cols = Math.min(cols, n);
+    const rows = Math.ceil(n / cols);
+    const cardW = Math.min(target + 40, (availW - (cols - 1) * gap) / cols);
+    const cardH = cardW * 9 / 16;
+    const baseW = cols * cardW + (cols - 1) * gap;
+    const wallH = rows * cardH + (rows - 1) * gap;
+    wall.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+    wall.style.gap = gap + 'px';
+    wall.style.width = baseW + 'px';
+    // flat wall, horizontally aligned: fit one screen with scale-to-fit, else vertical scroll
+    if (wallH <= vh * 0.80) {
+      document.body.setAttribute('data-grid', 'fit');
+      wall.style.transformOrigin = 'center center';
+      wall.style.transform = 'none';
+      const r = wall.getBoundingClientRect();
+      let s = Math.min(vw * 0.92 / r.width, vh * 0.82 / r.height);
+      s = Math.max(0.6, Math.min(s, 1.6));
+      wall.style.transform = 'scale(' + s + ')';
+    } else {
+      document.body.setAttribute('data-grid', 'scroll');
+      wall.style.transformOrigin = 'center top';
+      wall.style.transform = 'none';
+    }
+    wall.querySelectorAll('.card .thumb').forEach(t => { const c = t.parentElement; if (c.clientWidth) t.style.transform = 'scale(' + (c.clientWidth / W) + ')'; });
+  }
+  function updateScrollOrigin() {
+    if (document.body.getAttribute('data-grid') !== 'scroll') return;
+    const ovg = document.getElementById('ov-grid');
+    wall.style.transformOrigin = '50% ' + (ovg.scrollTop + window.innerHeight / 2 - GRID_PAD) + 'px';
+  }
+
+  /* ════════ infinite gallery (shuffled, no repeats) ════════ */
+  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function shuffledRange(n, seed) { const rnd = mulberry32(seed); const a = Array.from({ length: n }, (_, i) => i); for (let i = n - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); const tmp = a[i]; a[i] = a[j]; a[j] = tmp; } return a; }
+
+  function buildGallery() {
+    const n = deck.length; if (!n) return;
+    const vw = innerWidth, vh = innerHeight, gap = 18;
+    const cardW = CARD_W, cardH = cardW * 9 / 16;
+    const cellW = cardW + gap, cellH = cardH + gap;
+    const visCols = Math.ceil(vw / cellW), visRows = Math.ceil(vh / cellH);
+    // tile: wide enough to fill; rows = max(enough to fill, fits all N pages) → nothing repeats until all pages are seen
+    const tileCols = visCols + 1;
+    const tileRows = Math.max(visRows + 1, Math.ceil(n / tileCols));
+    const tileCells = tileCols * tileRows;
+    const perm = shuffledRange(n, 0x9e3779b9);        // shuffle once to break the regular pattern
+    const tilePage = new Array(tileCells);
+    for (let k = 0; k < tileCells; k++) tilePage[k] = perm[k % n];
+
+    const cols = tileCols * 2, rows = tileRows * 2;    // 2× tile guarantees seamless drift
+    driftLayer.style.setProperty('--dx', (tileCols * cellW) + 'px');
+    driftLayer.style.setProperty('--dy', (tileRows * cellH) + 'px');
+    gallery.style.gridTemplateColumns = 'repeat(' + cols + ', ' + cardW + 'px)';
+    gallery.style.gridAutoRows = cardH + 'px';
+    gallery.style.gap = gap + 'px';
+    gallery.innerHTML = '';
+    const scale = cardW / W;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const idx = tilePage[(r % tileRows) * tileCols + (c % tileCols)];
+        gallery.appendChild(makeCard(idx, scale, true));  // gallery = image thumbnails (performance)
+      }
+    }
+  }
+
+  /* ════════ present ════════ */
+  function fit() {
+    const s = Math.min(innerWidth / W, innerHeight / H);
+    stage.style.transform = 'translate(' + ((innerWidth - W * s) / 2) + 'px, ' + ((innerHeight - H * s) / 2) + 'px) scale(' + s + ')';
+    stage.style.top = '0'; stage.style.left = '0';
+  }
+  // Slides report via postMessage (direct iframe access is blocked under file://):
+  //  - deckFontsReady: reveal the slide only once its fonts are loaded (no font flash)
+  //  - deckKey: navigation keys pressed while focus is inside the slide iframe
+  const unveil = () => {
+    frame.classList.remove('loading');
+    // drop the direction class after the transition so it never lingers
+    setTimeout(() => frame.classList.remove('enter-next', 'enter-prev', 'enter-jump'), 350);
+  };
+  frame.addEventListener('load', () => {
+    setTimeout(unveil, 600); // safety: never stay hidden
+  });
+  window.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.deckFontsReady) unveil();
+    if (d.deckKey) document.dispatchEvent(new KeyboardEvent('keydown', { key: d.deckKey, bubbles: true }));
+  });
+  function show(idx, dir) {
+    if (idx < 0 || idx >= deck.length) return;
+    current = idx;
+    if (frame.getAttribute('src') !== deck[idx].file) {
+      frame.classList.remove('enter-next', 'enter-prev', 'enter-jump');
+      frame.classList.add('loading', dir === 1 ? 'enter-next' : dir === -1 ? 'enter-prev' : 'enter-jump');
+      frame.src = deck[idx].file;
+    }
+    counter.innerHTML = (idx + 1) + ' / ' + deck.length + ' <span class="label">' + (deck[idx].label || '') + '</span>';
+    try { localStorage.setItem(storageKey, String(idx)); } catch (_) {}
+    if (location.hash !== '#' + (idx + 1)) history.replaceState(null, '', '#' + (idx + 1));
+  }
+  function next() { show(Math.min(current + 1, deck.length - 1), 1); }
+  function prev() { show(Math.max(current - 1, 0), -1); }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'Escape') { if (document.body.getAttribute('data-mode') === 'present') { e.preventDefault(); setMode('overview'); } return; }
+    if (e.key === 'p' || e.key === 'P') { window.print(); return; }
+    if (document.body.getAttribute('data-mode') !== 'present') return;
+    switch (e.key) {
+      case 'ArrowRight': case ' ': case 'PageDown': e.preventDefault(); next(); break;
+      case 'ArrowLeft': case 'PageUp': e.preventDefault(); prev(); break;
+      case 'Home': e.preventDefault(); show(0); break;
+      case 'End': e.preventDefault(); show(deck.length - 1); break;
+      default: if (e.key >= '1' && e.key <= '9') { const i = parseInt(e.key, 10) - 1; if (i < deck.length) { e.preventDefault(); show(i); } }
+    }
+  });
+  document.getElementById('navL').addEventListener('click', prev);
+  document.getElementById('navR').addEventListener('click', next);
+  document.getElementById('startBtn').addEventListener('click', () => setMode('present'));
+  document.getElementById('overviewBtn').addEventListener('click', () => setMode('overview'));
+  let rT;
+  window.addEventListener('resize', () => { fit(); clearTimeout(rT); rT = setTimeout(buildOverview, 140); });
+  document.getElementById('ov-grid').addEventListener('scroll', updateScrollOrigin, { passive: true });
+  window.addEventListener('hashchange', () => { const m = location.hash.match(/^#(\d+)$/); if (m) { current = parseInt(m[1], 10) - 1; setMode('present'); } });
+
+  const hashMatch = location.hash.match(/^#(\d+)$/);
+  if (hashMatch) current = Math.min(parseInt(hashMatch[1], 10) - 1, deck.length - 1);
+  else { try { const v = parseInt(localStorage.getItem(storageKey), 10); if (!isNaN(v) && v >= 0 && v < deck.length) current = v; } catch (_) {} }
+
+  fit(); show(current);
+  if (hashMatch) setMode('present'); else { setMode('overview'); buildOverview(); }
+
+  window.addEventListener('beforeprint', () => { printStack.innerHTML = ''; deck.forEach(item => { const f = document.createElement('iframe'); f.src = item.file; printStack.appendChild(f); }); printStack.style.display = 'block'; stage.style.display = 'none'; });
+  window.addEventListener('afterprint', () => { printStack.innerHTML = ''; printStack.style.display = 'none'; stage.style.display = ''; });
+})();
+</script>
+</body>
+</html>

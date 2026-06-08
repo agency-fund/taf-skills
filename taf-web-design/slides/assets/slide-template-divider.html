@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Section divider</title>
+<link rel="stylesheet" href="shared/fonts.css">
+<link rel="stylesheet" href="shared/anim.css">
+<link rel="stylesheet" href="shared/taf.css">
+<style>
+  /* Dark full-bleed divider with a subtle navy radial for depth. */
+  body.dark .slide { justify-content: center; position: relative; padding: 130px 150px;
+    background: radial-gradient(120% 120% at 30% 20%, #0B2341, #061A2E 75%); }
+  .topbar { position: absolute; top: 110px; left: 150px; display: flex; align-items: center; gap: 22px; }
+  .topbar .tick { width: 56px; height: 6px; background: var(--gold); border-radius: 3px; }
+  .topbar .wordmark { font-size: 20px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white); }
+  .d-eyebrow { font-size: 22px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin: 0 0 30px; }
+  .assertion { margin: 0; font-size: 92px; font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; color: var(--white); max-width: 1500px; }
+  .assertion .accent { color: var(--gold); }
+</style>
+</head>
+<body class="dark">
+  <div class="slide">
+    <div class="topbar" data-reveal>
+      <span class="tick"></span>
+      <span class="wordmark">Your Wordmark</span>
+    </div>
+    <p class="d-eyebrow" data-reveal>Part N &middot; Section</p>
+    <h1 class="assertion" data-reveal="scale">A short, declarative section <span class="accent">assertion</span>.</h1>
+  </div>
+<script src="shared/anim.js"></script>
+<script>
+/* Deck-shell integration. Keep verbatim. */
+(function () {
+  if (window.parent === window) return;
+  document.addEventListener('keydown', function (e) {
+    var nav = ['ArrowRight', 'ArrowLeft', ' ', 'PageDown', 'PageUp', 'Home', 'End', 'Escape'];
+    if (nav.indexOf(e.key) !== -1 || /^[1-9]$/.test(e.key) || e.key === 'p' || e.key === 'P') {
+      e.preventDefault();
+      window.parent.postMessage({ deckKey: e.key }, '*');
+    }
+  });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { window.parent.postMessage({ deckFontsReady: true }, '*'); });
+  } else { window.parent.postMessage({ deckFontsReady: true }, '*'); }
+})();
+</script>
+</body>
+</html>

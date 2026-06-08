@@ -1,13 +1,26 @@
-# TAF Web Design — Research Artifact Skill
+# TAF Web Design — Research Artifact + Slide Skill
 
 > A vibe-codeable web design system for The Agency Fund. Turn research briefs,
-> case studies, dashboards, and findings into presentable single-page HTML —
-> on-brand, accessible, and ready to share.
+> case studies, dashboards, and findings into presentable single-page HTML, or
+> build animated 1920×1080 HTML slide decks — on-brand, accessible, ready to share.
 
 This skill is the **web companion** to `agency-fund-design`. The parent skill
-covers the whole brand (decks, marks, sub-brands). This one is narrower: it
-exists so a researcher or PM can say "publish this finding as a web page" and
-get a polished, on-brand page back in one shot.
+covers the whole brand (decks for PowerPoint/Google Slides, marks, sub-brands).
+This one is narrower: web output, in two flavors that share one brand.
+
+## Two modes
+
+- **Mode A — web pages** (this README, `web-design-rules.md`, `components.md`,
+  `tokens.css`, `templates/`). A researcher or PM says "publish this finding as a
+  web page" and gets a polished, on-brand single-page HTML artifact back in one shot.
+- **Mode B — slide decks on web** (everything under `slides/`). The user says "make
+  the usual deck" / "build a talk" and gets an animated, multi-file HTML deck —
+  one 1920×1080 slide per file, an overview wall, keyboard navigation, click-to-explore
+  demos, vector PDF export, and one-command GitHub Pages hosting. Start at
+  `slides/slide-design.md`. (This is the system formerly carried in the
+  `my-design-slide` skill, folded in so one brand covers both.)
+
+`SKILL.md` routes between the two. The rest of this README covers Mode A.
 
 ---
 
@@ -41,6 +54,7 @@ conversation. The skill picks a template, fills the slots, and you iterate.
 | `templates/case-study.html` | Narrative case study. Photo hero · outcome panel · grantee chip shelf. |
 | `templates/insight-dashboard.html` | KPI-forward dashboard. Metric cards · trend charts (Chart.js) · short narrative. |
 | `templates/artifact-index.html` | Landing/collection page. Hero · cards grid · capability list. |
+| `slides/` | **Mode B.** The animated HTML slide-deck system: `slide-design.md` (entry point), `references/` (design system, archetypes, workflow), `assets/` (shared CSS/JS, self-hosted font, deck shell, slide templates, Pages deploy), `scripts/` (screenshot + PDF export). |
 
 ---
 
