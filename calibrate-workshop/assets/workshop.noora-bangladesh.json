@@ -1,0 +1,61 @@
+{
+  "_comment": "Noora Health Bangladesh RES preset (the translated message-level dataset). The speaker values below are placeholders: run inspect_export.py and copy the real values of the `role` column into speaker_labels and assistant_speakers before building items.",
+  "workshop": {"name": "Noora Health Bangladesh RES Labeling Workshop", "slug": "nh-bd-w2", "prefix": "NH BD W2"},
+  "calibrate": {
+    "api_url": "https://calibrate-backend.learning.org.ai",
+    "web_url": "https://calibrate.learning.org.ai",
+    "judge_model": "openai/gpt-5.4-mini"
+  },
+  "data": {
+    "raw_export": "data/res_bangladesh_translated.csv",
+    "sample_file": "data/sample.csv",
+    "translated_file": "data/sample.csv",
+    "columns": {
+      "conversation_id": "convo_id",
+      "speaker": "role",
+      "text": "text",
+      "translation": "text_en",
+      "timestamp": "timestamp_utc",
+      "order_by": "turn_index",
+      "message_id": "msg_id",
+      "language": "user_language"
+    },
+    "message_meta": [],
+    "speaker_labels": {"USER": "Patient", "NURSE": "Nurse"},
+    "assistant_speakers": ["NURSE"],
+    "drop_speakers": [],
+    "language_filter": [],
+    "display_timezone": "Asia/Dhaka",
+    "id_label": "Conversation ID",
+    "description_fields": [
+      {"column": "user_condition_area", "label": "Condition area"},
+      {"column": "user_language", "label": "User language"}
+    ]
+  },
+  "sample": {"n_conversations": 25, "min_messages": 6, "seed": 42, "drop_duplicates": true, "require_text": true, "ids_file": null},
+  "translation": {"model": "gpt-4.1-mini", "context": "WhatsApp messages between patients and nurses on a maternal health support service in Bangladesh", "language_hint": "Bangla"},
+  "task": {
+    "name": "Noora Health Bangladesh RES Labeling Workshop 2",
+    "description": "Read each WhatsApp conversation between a patient and a Noora nurse (Bangla with an English translation) and answer every question for the conversation as a whole.",
+    "evaluators_file": "evaluators.json",
+    "items_file": "out/items.json",
+    "ids_file": "out/task_ids.json"
+  },
+  "judge": {
+    "subject": "a conversation between a nurse and a patient",
+    "context": "The context is Noora Health's Remote Engagement Services, where nurses answer patients' questions over WhatsApp in Bangladesh.",
+    "message_format": "Each message shows the speaker, then the original Bangla text and its English translation.",
+    "focus": "Judge the nurse's response(s) across the whole conversation.",
+    "judged": "the nurse"
+  },
+  "annotators": [],
+  "dashboard": {
+    "export_csv": "out/annotations_export.csv",
+    "out_html": "out/dashboard.html",
+    "title": "Bangladesh Workshop Agreement Review",
+    "eyebrow": "Noora Health · RES text labeling",
+    "hint_fields": ["Condition area"],
+    "deploy_dir": "out/site",
+    "salt_file": "out/.salt"
+  }
+}

@@ -1,0 +1,216 @@
+[
+  {
+    "name": "Easy to understand",
+    "description": "Is the MSE's response easy to understand?",
+    "rubric": "Response is clear and avoids medical jargon.",
+    "output_type": "rating",
+    "scale": [
+      {
+        "value": 1,
+        "name": "Yes",
+        "description": "Response is clear and avoids medical jargon.",
+        "color": "#16a34a"
+      },
+      {
+        "value": 2,
+        "name": "No",
+        "description": "The response does not meet this standard.",
+        "color": "#dc2626"
+      },
+      {
+        "value": 3,
+        "name": "Not enough Information",
+        "description": "The conversation does not contain enough information to judge this.",
+        "color": "#ca8a04"
+      },
+      {
+        "value": 4,
+        "name": "Not Applicable",
+        "description": "This criterion does not apply to this conversation.",
+        "color": "#6b7280"
+      }
+    ]
+  },
+  {
+    "name": "Empathetic",
+    "description": "Is the MSE's response empathetic?",
+    "rubric": "Response acknowledges the patient's concerns and does not dismiss any of the patient's worries or concerns.",
+    "output_type": "rating",
+    "scale": [
+      {
+        "value": 1,
+        "name": "Yes",
+        "description": "Response acknowledges the patient's concerns and does not dismiss any of the patient's worries or concerns.",
+        "color": "#16a34a"
+      },
+      {
+        "value": 2,
+        "name": "No",
+        "description": "The response does not meet this standard.",
+        "color": "#dc2626"
+      },
+      {
+        "value": 3,
+        "name": "Not enough Information",
+        "description": "The conversation does not contain enough information to judge this.",
+        "color": "#ca8a04"
+      },
+      {
+        "value": 4,
+        "name": "Not Applicable",
+        "description": "This criterion does not apply to this conversation.",
+        "color": "#6b7280"
+      }
+    ]
+  },
+  {
+    "name": "Contextually appropriate",
+    "description": "Is the MSE's response contextually appropriate?",
+    "rubric": "Response is feasible and aligned with local standards, guidelines and relevant within the context of the patient.",
+    "output_type": "rating",
+    "scale": [
+      {
+        "value": 1,
+        "name": "Yes",
+        "description": "Response is feasible and aligned with local standards, guidelines and relevant within the context of the patient.",
+        "color": "#16a34a"
+      },
+      {
+        "value": 2,
+        "name": "No",
+        "description": "The response does not meet this standard.",
+        "color": "#dc2626"
+      },
+      {
+        "value": 3,
+        "name": "Not enough Information",
+        "description": "The conversation does not contain enough information to judge this.",
+        "color": "#ca8a04"
+      },
+      {
+        "value": 4,
+        "name": "Not Applicable",
+        "description": "This criterion does not apply to this conversation.",
+        "color": "#6b7280"
+      }
+    ]
+  },
+  {
+    "name": "Clear next steps",
+    "description": "Does the MSE's response give clear next steps?",
+    "rubric": "The information for the user is clearly stated and action oriented.",
+    "output_type": "rating",
+    "scale": [
+      {
+        "value": 1,
+        "name": "Yes",
+        "description": "The information for the user is clearly stated and action oriented.",
+        "color": "#16a34a"
+      },
+      {
+        "value": 2,
+        "name": "No",
+        "description": "The response does not meet this standard.",
+        "color": "#dc2626"
+      },
+      {
+        "value": 3,
+        "name": "Not enough Information",
+        "description": "The conversation does not contain enough information to judge this.",
+        "color": "#ca8a04"
+      },
+      {
+        "value": 4,
+        "name": "Not Applicable",
+        "description": "This criterion does not apply to this conversation.",
+        "color": "#6b7280"
+      }
+    ]
+  },
+  {
+    "name": "Accurate",
+    "description": "Is the MSE's response accurate?",
+    "rubric": "Response is factually correct, and evidence-based.",
+    "output_type": "rating",
+    "scale": [
+      {
+        "value": 1,
+        "name": "Yes",
+        "description": "Response is factually correct, and evidence-based.",
+        "color": "#16a34a"
+      },
+      {
+        "value": 2,
+        "name": "No",
+        "description": "The response does not meet this standard.",
+        "color": "#dc2626"
+      },
+      {
+        "value": 3,
+        "name": "Not enough Information",
+        "description": "The conversation does not contain enough information to judge this.",
+        "color": "#ca8a04"
+      },
+      {
+        "value": 4,
+        "name": "Not Applicable",
+        "description": "This criterion does not apply to this conversation.",
+        "color": "#6b7280"
+      }
+    ]
+  },
+  {
+    "name": "Safe",
+    "description": "Is the MSE's response safe?",
+    "rubric": "Response is medically appropriate. It neither omits critical safety information nor conveys information that could cause unnecessary harm. The response includes escalation or contingency plans if needed.",
+    "output_type": "rating",
+    "scale": [
+      {
+        "value": 1,
+        "name": "Yes",
+        "description": "Response is medically appropriate. It neither omits critical safety information nor conveys information that could cause unnecessary harm. The response includes escalation or contingency plans if needed.",
+        "color": "#16a34a"
+      },
+      {
+        "value": 2,
+        "name": "No",
+        "description": "The response does not meet this standard.",
+        "color": "#dc2626"
+      },
+      {
+        "value": 3,
+        "name": "Not enough Information",
+        "description": "The conversation does not contain enough information to judge this.",
+        "color": "#ca8a04"
+      },
+      {
+        "value": 4,
+        "name": "Not Applicable",
+        "description": "This criterion does not apply to this conversation.",
+        "color": "#6b7280"
+      }
+    ]
+  },
+  {
+    "name": "Classification",
+    "description": "How would you classify this query (as defined by CoPilot's definition)?",
+    "rubric": "Routine queries can be handled through standard advice and follow-up; Emergency queries describe a situation that needs urgent medical attention or escalation.",
+    "output_type": "binary",
+    "optional": true,
+    "scale": [
+      {
+        "value": false,
+        "name": "Routine",
+        "description": "The query can be handled through routine advice and follow-up.",
+        "color": "#16a34a"
+      },
+      {
+        "value": true,
+        "name": "Emergency",
+        "description": "The query describes a situation that needs urgent medical attention or escalation.",
+        "color": "#dc2626"
+      }
+    ],
+    "focus": "Classify the patient's query based on the whole conversation."
+  }
+]

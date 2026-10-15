@@ -113,4 +113,18 @@ To use a skill from this repository in Claude.ai:
 4. Select the zipped folder
 5. Enable the skill, then test it by asking Claude to perform the target task
 
-For Claude Code, place the skill folder in your Claude Code skills directory.
+For Claude Code, place the skill folder in your Claude Code skills directory (`~/.claude/skills/`), or install a single skill straight from GitHub (needs Node.js):
+
+```
+npx skills add agency-fund/taf-skills --skill calibrate-workshop -a claude-code -g
+```
+
+## Skills in This Repository
+
+| Skill | What it does |
+|---|---|
+| `ask-agency-measurement` | Coaches teams through defining and measuring human agency in a digital or AI tool |
+| `behavioral-science` | Applies behavioral science to diagnosis, intervention design, measurement and user research |
+| `calibrate-workshop` | Sets up and runs a rater calibration (labeling) workshop on Calibrate with Claude Code, from a conversation export to an agreement dashboard; includes Noora Health presets |
+| `taf-design-system` | TAF brand system for PowerPoint decks built with PptxGenJS |
+| `taf-web-design` | TAF brand system for HTML pages and browser-based slide decks |

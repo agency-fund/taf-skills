@@ -1,0 +1,79 @@
+{
+  "_comment": "Noora Health India RES preset (the Workshop 4 settings). Copy as workshop.json, then change workshop.name, workshop.slug, workshop.prefix (new for every workshop), task.name, dashboard.title, data.raw_export and annotators.",
+  "workshop": {"name": "Noora Health RES Text Labeling Workshop 5", "slug": "nh-w5", "prefix": "NH W5"},
+  "calibrate": {
+    "api_url": "https://calibrate-backend.learning.org.ai",
+    "web_url": "https://calibrate.learning.org.ai",
+    "judge_model": "openai/gpt-5.4-mini"
+  },
+  "data": {
+    "raw_export": "data/res_ticket_messages_export.csv",
+    "sample_file": "data/sample.csv",
+    "translated_file": "data/sample_translated.csv",
+    "columns": {
+      "conversation_id": "chat_id",
+      "speaker": "author_type",
+      "text": "message_content",
+      "translation": "message_content_en",
+      "timestamp": "updated_at",
+      "order_by": "inserted_at",
+      "message_id": "message_id",
+      "language": "user_language"
+    },
+    "message_meta": [
+      {"column": "message_type", "label": "Type"},
+      {"column": "has_medical_tag", "label": "Medical tag"},
+      {"column": "has_emergency_tag", "label": "Emergency tag"}
+    ],
+    "speaker_labels": {"OWNER": "USER", "OPERATOR": "AGENT"},
+    "assistant_speakers": ["OPERATOR"],
+    "drop_speakers": ["SYSTEM"],
+    "language_filter": ["hindi"],
+    "display_timezone": "Asia/Kolkata",
+    "id_label": "Chat ID",
+    "description_fields": [
+      {"column": "ticket_uuid", "label": "Tickets", "mode": "count"},
+      {"column": "expected_date_of_delivery", "label": "Expected date of delivery"},
+      {"column": "baby_date_of_birth", "label": "Baby date of birth"},
+      {"column": "user_language", "label": "User language"},
+      {"column": "user_state", "label": "User state"},
+      {"column": "res_program", "label": "RES program"},
+      {"column": "res_condition_area", "label": "RES condition area", "mode": "distinct"},
+      {"column": "mother_age", "label": "Mother age"},
+      {"column": "high_risk_details", "label": "High risk details"},
+      {"column": "operator_type", "label": "Operator type", "mode": "distinct"}
+    ]
+  },
+  "sample": {"n_conversations": 25, "min_messages": 10, "seed": 42, "drop_duplicates": true, "require_text": true, "ids_file": null},
+  "translation": {
+    "model": "gpt-4.1-mini",
+    "context": "WhatsApp messages between patients and nurses on a maternal health support service in India",
+    "language_hint": "an Indic language"
+  },
+  "task": {
+    "name": "Noora Health RES Text Labeling Workshop 5",
+    "description": "Read each WhatsApp conversation between a patient and a Noora nurse (shown in the original language with an English translation) and answer every question for the conversation as a whole.",
+    "evaluators_file": "evaluators.json",
+    "items_file": "out/items.json",
+    "ids_file": "out/task_ids.json"
+  },
+  "judge": {
+    "subject": "a conversation between a nurse and a patient",
+    "context": "The context is Noora Health's Remote Engagement Services, where nurses (MSEs) answer patients' questions over WhatsApp in India.",
+    "message_format": "Each message shows its message type and medical/emergency tags, followed by the original Hindi text and its English translation.",
+    "focus": "Judge the nurse's (MSE's) response(s) across the whole conversation.",
+    "judged": "the nurse"
+  },
+  "annotators": [],
+  "jobs": {"reasoning_mode": "optional", "comments_enabled": true},
+  "dashboard": {
+    "export_csv": "out/annotations_export.csv",
+    "out_html": "out/dashboard.html",
+    "title": "Workshop 5 Agreement Review",
+    "eyebrow": "Noora Health · RES text labeling",
+    "speaker_acronyms": ["MSE"],
+    "hint_fields": ["RES condition area", "User state", "RES program"],
+    "deploy_dir": "out/site",
+    "salt_file": "out/.salt"
+  }
+}

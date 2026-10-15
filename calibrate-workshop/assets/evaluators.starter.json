@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Easy to understand",
+    "description": "Is the agent's response easy to understand?",
+    "output_type": "rating",
+    "scale": [
+      {"value": 1, "name": "Yes", "description": "The response is clear and avoids jargon.", "color": "#16a34a"},
+      {"value": 2, "name": "No", "description": "The response does not meet this standard.", "color": "#dc2626"},
+      {"value": 3, "name": "Not enough Information", "description": "The conversation does not contain enough information to judge this.", "color": "#ca8a04"},
+      {"value": 4, "name": "Not Applicable", "description": "This question does not apply to this conversation.", "color": "#6b7280"}
+    ]
+  },
+  {
+    "name": "Escalated when needed",
+    "description": "Did the agent escalate when the situation called for it?",
+    "rubric": "Urgent situations were referred to a clinician or emergency service; routine ones were not escalated.",
+    "output_type": "binary",
+    "optional": true,
+    "scale": [
+      {"value": true, "name": "Yes", "description": "Escalation matched the situation.", "color": "#16a34a"},
+      {"value": false, "name": "No", "description": "Escalated when it was not needed, or did not escalate when it was.", "color": "#dc2626"}
+    ]
+  }
+]
