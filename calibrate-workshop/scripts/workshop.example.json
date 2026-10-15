@@ -1,0 +1,75 @@
+{
+  "_comment": "Copy into the workshop folder as workshop.json. Relative paths are relative to this file. Claude fills this in with you; see references/data-prep.md and references/noora-profile.md.",
+  "workshop": {
+    "name": "Labeling Workshop 1",
+    "slug": "workshop1",
+    "prefix": "W1"
+  },
+  "calibrate": {
+    "api_url": "https://api.calibrate.artpark.ai",
+    "web_url": "https://calibrate.artpark.ai",
+    "judge_model": "openai/gpt-5.4-mini"
+  },
+  "data": {
+    "raw_export": "data/export.csv",
+    "sample_file": "data/sample.csv",
+    "translated_file": "data/sample_translated.csv",
+    "columns": {
+      "conversation_id": "conversation_id",
+      "speaker": "speaker",
+      "text": "text",
+      "translation": "text_en",
+      "timestamp": "timestamp",
+      "order_by": null,
+      "message_id": null,
+      "language": null
+    },
+    "message_meta": [],
+    "speaker_labels": {"USER": "User", "AGENT": "Agent"},
+    "assistant_speakers": ["AGENT"],
+    "drop_speakers": ["SYSTEM"],
+    "language_filter": [],
+    "display_timezone": null,
+    "id_label": "Conversation ID",
+    "description_fields": []
+  },
+  "sample": {
+    "n_conversations": 25,
+    "min_messages": 6,
+    "seed": 42,
+    "drop_duplicates": true,
+    "require_text": true,
+    "ids_file": null
+  },
+  "translation": {
+    "model": "gpt-4.1-mini",
+    "context": "chat messages between users and a support agent",
+    "language_hint": ""
+  },
+  "task": {
+    "name": "Labeling Workshop 1",
+    "description": "Read each conversation and answer every question for the conversation as a whole.",
+    "evaluators_file": "evaluators.json",
+    "items_file": "out/items.json",
+    "ids_file": "out/task_ids.json"
+  },
+  "judge": {
+    "subject": "a conversation between a support agent and a user",
+    "context": "",
+    "message_format": "Each message shows the speaker, then the original text and its English translation.",
+    "focus": "Judge the agent's response(s) across the whole conversation.",
+    "judged": "the agent"
+  },
+  "annotators": ["asha", "ravi", "meena"],
+  "jobs": {"reasoning_mode": "optional", "comments_enabled": true},
+  "dashboard": {
+    "export_csv": "out/annotations_export.csv",
+    "out_html": "out/dashboard.html",
+    "title": "Workshop 1 Agreement Review",
+    "eyebrow": "Labeling workshop",
+    "rater_names": {},
+    "hint_fields": [],
+    "deploy_dir": "out/site",
+    "salt_file": "out/.salt"
+  }
+}

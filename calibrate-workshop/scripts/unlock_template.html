@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f5f8; --surface: #ffffff; --ink: #171a21; --ink-2: #4a5060; --muted: #7d8494;
+  --line: #dde1e8; --line-strong: #b9bfcb; --accent: #2f5fd0; --accent-ink: #ffffff; --danger: #b91c1c; --danger-bg: #fbe4e4;
+  --font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1116; --surface: #171a21; --ink: #f1f2f6; --ink-2: #c0c5cf; --muted: #8b919e;
+    --line: #2b303a; --line-strong: #444b58; --accent: #7aa2f2; --accent-ink: #0f1116; --danger: #f87171; --danger-bg: #3b1a1a;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1116; --surface: #171a21; --ink: #f1f2f6; --ink-2: #c0c5cf; --muted: #8b919e;
+  --line: #2b303a; --line-strong: #444b58; --accent: #7aa2f2; --accent-ink: #0f1116; --danger: #f87171; --danger-bg: #3b1a1a;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.45; display: grid; place-items: center; padding-inline: 16px; padding-block: 24px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 28px 28px 24px; width: min(100%, 420px); box-shadow: 0 1px 2px rgba(23,26,33,.06), 0 8px 24px rgba(23,26,33,.06); }
+.card[hidden] { display: none; }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+h1 { margin: 0 0 6px; font-size: 20px; font-weight: 600; letter-spacing: -.01em; text-wrap: balance; }
+p { margin: 0; color: var(--ink-2); font-size: 14px; }
+form { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+label { font-size: 13px; font-weight: 500; color: var(--ink-2); display: flex; flex-direction: column; gap: 6px; }
+input[type="password"] { font: inherit; padding: 9px 11px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); color: var(--ink); }
+input[type="password"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.remember { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); font-weight: 400; flex-direction: row; }
+button { font: inherit; font-weight: 600; padding: 9px 16px; border: 0; border-radius: 8px; background: var(--accent); color: var(--accent-ink); cursor: pointer; }
+button:disabled { opacity: .6; cursor: progress; }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.status { min-height: 20px; font-size: 13px; color: var(--muted); }
+.status.error { color: var(--danger); background: var(--danger-bg); padding: 6px 10px; border-radius: 6px; }
+.fine { margin-top: 18px; font-size: 12px; color: var(--muted); }
+noscript p { color: var(--danger); margin-top: 16px; }
+</style>
+</head>
+<body>
+<main class="card" id="card">
+  <div class="eyebrow">__EYEBROW__</div>
+  <h1>__TITLE__</h1>
+  <p>This dashboard contains conversation data and is encrypted. Enter the workshop password to open it.</p>
+  <form id="f" autocomplete="on">
+    <label>Password
+      <input id="pw" type="password" name="password" autocomplete="current-password" required autofocus>
+    </label>
+    <div class="row">
+      <label class="remember"><input id="remember" type="checkbox"> Remember on this device for 30 days</label>
+      <button id="go" type="submit">Unlock</button>
+    </div>
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+  </form>
+  <noscript><p>JavaScript is required to decrypt this page.</p></noscript>
+  <div class="fine">Decryption happens in your browser; the password is never sent anywhere. Reloading this tab keeps it open for 8 hours; closing the tab locks it again unless you ticked “remember”.</div>
+</main>
+<script type="application/json" id="payload">/*__PAYLOAD__*/</script>
+<script>
+(function () {
+  const P = JSON.parse(document.getElementById('payload').textContent);
+  const STORE = '__STORE__';
+  const SESSION_MS = 8 * 60 * 60 * 1000;       // a reload in the same tab stays unlocked this long
+  const REMEMBER_MS = 30 * 24 * 60 * 60 * 1000; // "remember on this device"
+  const card = document.getElementById('card'), form = document.getElementById('f'), pw = document.getElementById('pw');
+  const go = document.getElementById('go'), status = document.getElementById('status'), remember = document.getElementById('remember');
+  const fromB64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const toB64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+  function say(text, error) { status.textContent = text; status.className = 'status' + (error ? ' error' : ''); }
+
+  // --- stored keys: {k: base64 raw AES key, exp: epoch ms}; anything else is discarded ---
+  function store(storage, keyB64, ttl) { try { storage.setItem(STORE, JSON.stringify({ k: keyB64, exp: Date.now() + ttl })); } catch (e) {} }
+  function forget(storage) { try { storage.removeItem(STORE); } catch (e) {} }
+  function recall(storage) {
+    try {
+      const raw = storage.getItem(STORE); if (!raw) return null;
+      const rec = JSON.parse(raw);
+      if (rec && typeof rec.k === 'string' && typeof rec.exp === 'number' && rec.exp > Date.now()) return rec.k;
+    } catch (e) {}
+    forget(storage); return null;
+  }
+
+  async function deriveKey(password) {
+    const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt: fromB64(P.salt), iterations: P.iterations, hash: 'SHA-256' },
+      material, { name: 'AES-GCM', length: 256 }, true, ['decrypt']);
+  }
+  async function decrypt(key) {
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromB64(P.iv) }, key, fromB64(P.ct));
+    return new TextDecoder().decode(plain);
+  }
+  // Swap the whole document for the dashboard without document.write(): depending on how far the
+  // browser has got with loading this page, a write can end up appended below the card instead
+  // of replacing it. Parsing the dashboard with DOMParser and replacing the root element is
+  // deterministic. Scripts parsed by DOMParser never execute, so they are re-created in place.
+  async function show(html) {
+    if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
+    card.hidden = true;
+    const next = new DOMParser().parseFromString(html, 'text/html');
+    document.replaceChild(document.adoptNode(next.documentElement), document.documentElement);
+    for (const old of Array.from(document.querySelectorAll('script'))) {
+      const fresh = document.createElement('script');
+      for (const a of Array.from(old.attributes)) fresh.setAttribute(a.name, a.value);
+      fresh.textContent = old.textContent;
+      old.replaceWith(fresh);
+    }
+    window.scrollTo(0, 0);
+  }
+  async function unlock(password, keep) {
+    go.disabled = true; say('Checking password…');
+    try {
+      const key = await deriveKey(password);
+      const html = await decrypt(key);
+      const keyB64 = toB64(await crypto.subtle.exportKey('raw', key));
+      store(sessionStorage, keyB64, SESSION_MS);
+      if (keep) store(localStorage, keyB64, REMEMBER_MS); else forget(localStorage);
+      await show(html);
+    } catch (e) {
+      say('That password did not work. Check for typos and try again.', true);
+      go.disabled = false; pw.select();
+    }
+  }
+  form.addEventListener('submit', e => { e.preventDefault(); if (pw.value) unlock(pw.value, remember.checked); });
+
+  // Auto-unlock: a remembered device first, then a reload within the same tab's session.
+  (async () => {
+    const keyB64 = recall(localStorage) || recall(sessionStorage);
+    if (!keyB64) return;
+    try {
+      const key = await crypto.subtle.importKey('raw', fromB64(keyB64), { name: 'AES-GCM' }, true, ['decrypt']);
+      say('Unlocking…');
+      await show(await decrypt(key));
+    } catch (e) {
+      forget(localStorage); forget(sessionStorage); say('');
+    }
+  })();
+  if (!window.isSecureContext || !crypto.subtle) say('This page needs a secure (https) connection to decrypt.', true);
+})();
+</script>
+</body>
+</html>

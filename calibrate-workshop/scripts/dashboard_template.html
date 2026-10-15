@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>__TITLE__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f5f8;
+  --surface: #ffffff;
+  --surface-2: #eceef3;
+  --surface-3: #e2e5ec;
+  --ink: #171a21;
+  --ink-2: #4a5060;
+  --muted: #7d8494;
+  --line: #dde1e8;
+  --line-strong: #b9bfcb;
+  --accent: #2f5fd0;
+  --accent-ink: #244cab;
+  --accent-soft: #e6edfc;
+  --focus: #2f5fd0;
+  /* Answer options take their colour from the evaluator scale (--c on each chip); these two are fixed:
+     --cal-nei marks a split (no majority), --cal-not the grouped "not <first option>" answer. */
+  --cal-nei: #ca8a04; --cal-not: #475569;
+  /* sequential ramp (blue) for "how much disagreement" */
+  --seq-0: #f4f5f8; --seq-1: #cde2fb; --seq-2: #9ec5f4; --seq-3: #5598e7; --seq-4: #256abf; --seq-5: #104281;
+  --seq-ink-high: #ffffff;
+  --shadow: 0 1px 2px rgba(23,26,33,.06), 0 4px 16px rgba(23,26,33,.05);
+  --font: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0f1116; --surface: #171a21; --surface-2: #1f232c; --surface-3: #2a2f3a;
+    --ink: #f1f2f6; --ink-2: #c0c5cf; --muted: #8b919e; --line: #2b303a; --line-strong: #444b58;
+    --accent: #7aa2f2; --accent-ink: #9ab8f6; --accent-soft: #1c2a4a; --focus: #7aa2f2;
+    --seq-0: #171a21; --seq-1: #1a2f55; --seq-2: #1c4a8c; --seq-3: #2a6fc4; --seq-4: #5598e7; --seq-5: #9ec5f4;
+    --seq-ink-high: #0f1116;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f1116; --surface: #171a21; --surface-2: #1f232c; --surface-3: #2a2f3a;
+  --ink: #f1f2f6; --ink-2: #c0c5cf; --muted: #8b919e; --line: #2b303a; --line-strong: #444b58;
+  --accent: #7aa2f2; --accent-ink: #9ab8f6; --accent-soft: #1c2a4a; --focus: #7aa2f2;
+  --seq-0: #171a21; --seq-1: #1a2f55; --seq-2: #1c4a8c; --seq-3: #2a6fc4; --seq-4: #5598e7; --seq-5: #9ec5f4;
+  --seq-ink-high: #0f1116;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.35);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font); font-size: 14px; line-height: 1.45;
+  padding-block: 0 48px; padding-inline: 20px;
+}
+a { color: var(--accent-ink); }
+button, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+h1 { font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
+h2 { font-size: 16px; font-weight: 600; }
+h3 { font-size: 13px; font-weight: 600; }
+.mono { font-family: var(--mono); font-size: 12.5px; }
+.muted { color: var(--muted); }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1600px; margin: 0 auto; }
+
+/* ---------- top bar ---------- */
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line); margin-inline: -20px; padding: 10px 20px;
+}
+.topbar .wrap { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; }
+.title-block { display: flex; flex-direction: column; gap: 2px; min-width: 240px; }
+.title-block .sub { font-size: 12px; color: var(--ink-2); }
+.tabs { display: flex; gap: 4px; background: var(--surface-2); padding: 3px; border-radius: 8px; }
+.tabs button {
+  border: 0; background: transparent; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 500; color: var(--ink-2);
+}
+.tabs button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin-left: auto; }
+.control { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-2); }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 6px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface); padding: 4px 10px; cursor: pointer; font-size: 12.5px; color: var(--ink-2); }
+.seg button + button { border-left: 1px solid var(--line-strong); }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent-ink); font-weight: 600; }
+
+/* ---------- sections ---------- */
+main { padding-top: 20px; }
+section.panel {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; margin-bottom: 18px;
+}
+.panel-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin-bottom: 12px; }
+.panel-head p { margin: 0; color: var(--ink-2); font-size: 13px; max-width: 72ch; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); gap: 18px; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-size: 12px; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
+td.num, th.num { text-align: right; }
+tbody tr:last-child td { border-bottom: 0; }
+
+/* ---------- legend ---------- */
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 12px; color: var(--ink-2); }
+.legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+/* ---------- chips (answer options) ---------- */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px 2px 6px; border-radius: 5px;
+  font-size: 12.5px; font-weight: 500; white-space: nowrap; line-height: 1.4; border: 2px solid transparent;
+}
+.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--dot); flex: none; }
+.chip.opt { --dot: var(--c); background: color-mix(in srgb, var(--c) 16%, var(--surface)); color: color-mix(in srgb, var(--c) 62%, var(--ink)); }
+.chip.c-nei { --c: var(--cal-nei); --dot: var(--c); background: color-mix(in srgb, var(--c) 16%, var(--surface)); color: color-mix(in srgb, var(--c) 62%, var(--ink)); }
+.chip.c-none { --dot: transparent; background: transparent; color: var(--muted); border: 1px dashed var(--line-strong); padding-left: 8px; }
+.chip.c-none::before { display: none; }
+.chip.dis { border-color: var(--ink); box-shadow: 0 0 0 2px var(--surface); }
+.chip.dis::after { content: "≠"; font-weight: 700; margin-left: 2px; }
+.chip.sm { font-size: 11.5px; padding: 1px 7px 1px 5px; }
+
+/* ---------- inline bar ---------- */
+.bar { display: inline-flex; align-items: center; gap: 8px; min-width: 120px; }
+.bar .track { flex: 1; height: 8px; background: var(--surface-2); border-radius: 2px; overflow: hidden; }
+.bar .fill { display: block; height: 100%; background: var(--accent); border-radius: 2px; }
+.bar .val { width: 40px; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- heatmap ---------- */
+.heat td.cell { text-align: center; font-variant-numeric: tabular-nums; padding: 0; }
+.heat .cellin {
+  margin: 2px; padding: 6px 4px; border-radius: 4px; font-size: 12.5px; min-width: 52px; cursor: default;
+}
+.heat .cellin.h0 { background: var(--seq-0); color: var(--muted); }
+.heat .cellin.h1 { background: var(--seq-1); color: var(--ink); }
+.heat .cellin.h2 { background: var(--seq-2); color: var(--ink); }
+.heat .cellin.h3 { background: var(--seq-3); color: #fff; }
+.heat .cellin.h4 { background: var(--seq-4); color: #fff; }
+.heat .cellin.h5 { background: var(--seq-5); color: var(--seq-ink-high); }
+:root[data-theme="dark"] .heat .cellin.h3, :root[data-theme="dark"] .heat .cellin.h4 { color: #fff; }
+.heat .cellin.blank { background: transparent; color: var(--muted); }
+.heat th.rot { white-space: normal; max-width: 90px; font-size: 11.5px; line-height: 1.25; }
+
+/* ---------- stacked distribution ---------- */
+.stack { display: flex; height: 14px; gap: 2px; border-radius: 3px; overflow: hidden; min-width: 90px; }
+.stack span { flex: var(--w) 0 0; min-width: 0; }
+.stackcount { font-size: 11.5px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* ---------- conversations layout ---------- */
+.convs { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 1000px) { .convs { grid-template-columns: 1fr; } }
+.convlist { position: sticky; top: 74px; max-height: calc(100vh - 90px); overflow: auto; padding: 10px; }
+@media (max-width: 1000px) { .convlist { position: static; max-height: 320px; } }
+.convlist .tools { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; margin-bottom: 8px; font-size: 12px; color: var(--ink-2); }
+.convlist select { border: 1px solid var(--line-strong); border-radius: 5px; padding: 3px 6px; background: var(--surface); font-size: 12px; max-width: 170px; }
+.convrow {
+  display: grid; grid-template-columns: 22px 1fr auto; gap: 4px 8px; align-items: center; width: 100%;
+  border: 0; background: transparent; text-align: left; padding: 6px 8px; border-radius: 7px; cursor: pointer; color: var(--ink);
+}
+.convrow:hover { background: var(--surface-2); }
+.convrow[aria-current="true"] { background: var(--accent-soft); }
+.convrow .ix { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.convrow .id { font-family: var(--mono); font-size: 12px; }
+.convrow .hint { font-size: 11px; color: var(--muted); grid-column: 2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.convrow .mini { display: flex; gap: 3px; grid-column: 3; grid-row: 1 / span 2; align-self: center; }
+.mini i {
+  display: block; width: 17px; height: 17px; border-radius: 3px; background: var(--surface-2); border: 1px solid var(--line);
+  font-style: normal; font-size: 10px; line-height: 15px; text-align: center; color: transparent; font-variant-numeric: tabular-nums;
+}
+.mini i.d1 { background: var(--seq-2); border-color: transparent; color: var(--ink); }
+.mini i.d2 { background: var(--seq-3); border-color: transparent; color: #fff; }
+.mini i.d3 { background: var(--seq-4); border-color: transparent; color: #fff; }
+.mini i.d4 { background: var(--seq-5); border-color: transparent; color: var(--seq-ink-high); }
+.mini i.split { background: repeating-linear-gradient(45deg, var(--cal-nei) 0 3px, var(--surface) 3px 6px); border-color: var(--cal-nei); }
+.mini i.thin { background: transparent; border-style: dotted; }
+.mini i.ai { box-shadow: inset 0 0 0 2px var(--ink); }
+.mini i.dim { opacity: .3; }
+.mini i.focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.convrow .badge { font-size: 11px; color: var(--ink-2); grid-column: 3; text-align: right; font-variant-numeric: tabular-nums; }
+.minilegend { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 5px 12px; }
+.minilegend i { display: inline-block; width: 13px; height: 13px; border-radius: 3px; vertical-align: -2px; margin-right: 4px; border: 1px solid var(--line); background: var(--surface-2); }
+.minilegend i.d2 { background: var(--seq-3); border-color: transparent; }
+.minilegend i.split { background: repeating-linear-gradient(45deg, var(--cal-nei) 0 3px, var(--surface) 3px 6px); border-color: var(--cal-nei); }
+.minilegend i.ai { box-shadow: inset 0 0 0 2px var(--ink); }
+.minilegend i.thin { background: transparent; border-style: dotted; }
+
+/* ---------- detail ---------- */
+.detail { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.detail-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.detail-head .nav { display: flex; gap: 6px; margin-left: auto; }
+.detail-head .nav button { border: 1px solid var(--line-strong); background: var(--surface); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+.detail-head .nav button:disabled { opacity: .4; cursor: default; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: var(--ink-2); }
+.facts .f b { color: var(--ink); font-weight: 500; }
+.facts .f.long { flex-basis: 100%; }
+.two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 1100px) { .two { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-width: 0; }
+.card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.card-head .sp { flex: 1; }
+.linkbtn { border: 0; background: transparent; color: var(--accent-ink); cursor: pointer; padding: 0; font-size: 12.5px; text-decoration: underline; text-underline-offset: 2px; }
+
+/* transcript */
+.transcript { display: flex; flex-direction: column; gap: 12px; max-height: 78vh; overflow: auto; padding-right: 4px; }
+.msg { display: flex; flex-direction: column; gap: 4px; max-width: 92%; }
+.msg.user { align-self: flex-start; }
+.msg.assistant { align-self: flex-end; }
+.msg .who { display: flex; gap: 8px; align-items: baseline; font-size: 11.5px; color: var(--muted); }
+.msg .who b { color: var(--ink-2); font-weight: 600; letter-spacing: .04em; font-size: 11px; }
+.msg .bubble { background: var(--surface-2); border-radius: 10px; padding: 9px 12px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13.5px; }
+.msg.assistant .bubble { background: var(--accent-soft); }
+.msg .orig { font-size: 13px; color: var(--ink-2); border-top: 1px dashed var(--line-strong); margin-top: 6px; padding-top: 6px; white-space: pre-wrap; }
+.msg .metaline { font-size: 11px; color: var(--muted); }
+
+/* ratings grid */
+.rgrid th, .rgrid td { padding: 6px 8px; }
+.rgrid th.q { width: 1%; white-space: nowrap; }
+.rgrid td { min-width: 118px; }
+.rgrid td .chip { white-space: normal; text-align: left; max-width: 150px; }
+.rgrid td .chipwrap { display: inline-block; }
+.rgrid tr.split td { background: repeating-linear-gradient(45deg, transparent 0 8px, color-mix(in srgb, var(--cal-nei) 9%, transparent) 8px 16px); }
+.rgrid tr.disagree th.q { border-left: 3px solid var(--ink); }
+.rgrid tr.split th.q { border-left: 3px solid var(--cal-nei); }
+.rgrid .qname { font-weight: 600; }
+.rgrid .qhelp { display: block; font-size: 11px; color: var(--muted); font-weight: 400; max-width: 150px; white-space: normal; }
+.rgrid td.maj { border-left: 1px solid var(--line-strong); }
+.rgrid .tally { font-size: 11px; color: var(--muted); margin-left: 4px; }
+.rgrid .aihead { color: var(--accent-ink); }
+
+/* discussion points */
+.points { display: flex; flex-direction: column; gap: 12px; }
+.point { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+.point.split { border-color: var(--cal-nei); }
+.point.disagree { border-left: 3px solid var(--ink); }
+.point .ph { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; margin-bottom: 8px; }
+.point .ph .qn { font-weight: 600; }
+.point .who { font-weight: 600; }
+.point ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.point li { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: start; }
+.point li .rs { font-size: 13px; color: var(--ink-2); white-space: pre-wrap; overflow-wrap: anywhere; }
+.point li .rs.none { color: var(--muted); font-style: italic; }
+.point .sub { font-size: 11.5px; color: var(--muted); margin: 8px 0 4px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+.point .ai-tag { font-size: 11px; color: var(--accent-ink); font-weight: 600; }
+.empty { color: var(--muted); font-style: italic; }
+
+details.all { margin-top: 4px; }
+details.all summary { cursor: pointer; color: var(--accent-ink); font-size: 12.5px; }
+.alltab td { font-size: 12.5px; white-space: pre-wrap; overflow-wrap: anywhere; vertical-align: top; }
+.alltab td .chip { margin-bottom: 4px; }
+.comments { display: flex; flex-direction: column; gap: 6px; }
+.comments div { display: grid; grid-template-columns: 90px 1fr; gap: 8px; font-size: 13px; }
+.comments b { font-weight: 600; color: var(--ink-2); }
+
+/* tooltip */
+#tip {
+  position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--bg);
+  padding: 6px 9px; border-radius: 6px; font-size: 12px; max-width: 320px; white-space: pre-wrap; box-shadow: var(--shadow);
+}
+#tip[hidden] { display: none; }
+
+.kbd { font-family: var(--mono); font-size: 11px; border: 1px solid var(--line-strong); border-radius: 4px; padding: 0 5px; color: var(--ink-2); }
+.note { font-size: 12px; color: var(--muted); margin-top: 10px; max-width: 90ch; }
+.note p { margin: 4px 0; }
+@media (prefers-reduced-motion: no-preference) { .tabs button, .convrow, .chip { transition: background .12s ease; } }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <div class="title-block">
+      <h1>__TITLE__</h1>
+      <div class="sub" id="subtitle"></div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-overview" aria-selected="true" data-tab="overview">Agreement overview</button>
+      <button role="tab" id="tab-conversations" aria-selected="false" data-tab="conversations">Conversations</button>
+    </div>
+    <div class="controls">
+      <div class="control" title="Which raters form the majority a rating is compared against">
+        <span>Majority from</span>
+        <div class="seg" id="ref-seg">
+          <button aria-pressed="true" data-ref="humans">Humans only</button>
+          <button aria-pressed="false" data-ref="all">Humans + AI</button>
+        </div>
+      </div>
+      <div class="control" id="cat-control" title="Compare the answer options as-is, or only whether the answer was the first option">
+        <span>Options</span>
+        <div class="seg" id="cat-seg">
+          <button aria-pressed="true" data-cat="strict">As rated</button>
+          <button aria-pressed="false" data-cat="yes" id="cat-yes-btn">First option vs. rest</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="view-overview"></div>
+  <div id="view-conversations" hidden>
+    <div class="convs">
+      <section class="panel convlist" id="convlist"></section>
+      <div class="detail" id="detail"></div>
+    </div>
+  </div>
+</main>
+<div id="tip" hidden></div>
+
+<script type="application/json" id="data">/*__DATA__*/</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById('data').textContent);
+  const Q = D.questions, R = D.raters, C = D.conversations;
+  const HUMANS = R.filter(r => r.kind === 'human');
+  const AI = R.find(r => r.kind === 'ai');
+  const BY_KEY = Object.fromEntries(R.map(r => [r.key, r]));
+
+  const state = { tab: 'overview', ref: 'humans', cat: 'strict', sort: 'disagree', qFocus: '', matrixQ: 'all', sel: 0, showOriginal: false, distCounts: false };
+  const STATE_KEY = (D.meta.storage_key || 'calibrate-workshop') + '-state';
+  try { const s = localStorage.getItem(STATE_KEY); if (s) Object.assign(state, JSON.parse(s)); } catch (e) {}
+  function persist() { try { localStorage.setItem(STATE_KEY, JSON.stringify({ ref: state.ref, cat: state.cat, sort: state.sort, showOriginal: state.showOriginal })); } catch (e) {} }
+
+  // ---------- helpers ----------
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const pct = v => v == null ? '–' : Math.round(v * 100) + '%';
+  const fmtAlpha = v => v == null ? '–' : (v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
+  const raw = (c, q, r) => c.ratings[q.key][r.key];
+  // "Grouped" mode keeps a question's first option and folds every other option into "Not <first>".
+  // Only questions with more than two options are grouped.
+  const groupable = q => !q.binary && q.scale.length > 2;
+  const notLabel = q => 'Not ' + q.scale[0].name;
+  function lab(q, label) {
+    if (label == null) return null;
+    if (state.cat === 'yes' && groupable(q)) return label === q.scale[0].name ? label : notLabel(q);
+    return label;
+  }
+  function chip(label, extra) {
+    if (label == null) return '<span class="chip c-none ' + (extra || '') + '">no answer</span>';
+    return '<span class="chip opt ' + (extra || '') + '" style="--c:' + esc(scaleColor(label)) + '">' + esc(label) + '</span>';
+  }
+  function refRaters() { return state.ref === 'all' ? R : HUMANS; }
+
+  // One (conversation, question) cell: majority, who disagrees, split/thin status.
+  function analyze(c, q, ref) {
+    ref = ref || refRaters();
+    const labels = {};
+    R.forEach(r => { labels[r.key] = lab(q, raw(c, q, r).label); });
+    const counts = {}; let n = 0;
+    ref.forEach(r => { const l = labels[r.key]; if (l != null) { counts[l] = (counts[l] || 0) + 1; n++; } });
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    let status = 'unanimous', majority = null, majCount = 0;
+    if (n < 2) status = 'thin';
+    else if (sorted.length > 1 && sorted[0][1] === sorted[1][1]) status = 'split';
+    else { majority = sorted[0][0]; majCount = sorted[0][1]; }
+    const dis = [];
+    if (majority != null) {
+      R.forEach(r => { const l = labels[r.key]; if (l != null && l !== majority) dis.push(r.key); });
+      if (dis.length) status = 'disagree';
+    }
+    return { labels, counts, sorted, n, status, majority, majCount, dis, aiDis: dis.includes('ai'), humanDis: dis.filter(k => k !== 'ai') };
+  }
+  const analysisCache = new Map();
+  function cell(c, q) {
+    const k = state.ref + '|' + state.cat + '|' + c.idx + '|' + q.key;
+    if (!analysisCache.has(k)) analysisCache.set(k, analyze(c, q));
+    return analysisCache.get(k);
+  }
+  function unitsFor(q) {
+    return C.map(c => { const u = {}; R.forEach(r => { u[r.key] = lab(q, raw(c, q, r).label); }); return u; });
+  }
+  function pairAgreement(units, keys) {
+    let tot = 0, cnt = 0;
+    for (let i = 0; i < keys.length; i++) for (let j = i + 1; j < keys.length; j++) {
+      const p = pairRate(units, keys[i], keys[j]); if (p) { tot += p.rate; cnt++; }
+    }
+    return cnt ? tot / cnt : null;
+  }
+  function pairRate(units, a, b) {
+    let same = 0, both = 0;
+    units.forEach(u => { const x = u[a], y = u[b]; if (x != null && y != null) { both++; if (x === y) same++; } });
+    return both ? { rate: same / both, same, both } : null;
+  }
+  // Krippendorff's alpha, nominal metric, tolerates missing values (units with <2 values are skipped).
+  function krippAlpha(units, keys) {
+    const o = {}; const cats = new Set();
+    units.forEach(u => {
+      const vals = keys.map(k => u[k]).filter(v => v != null); const m = vals.length; if (m < 2) return;
+      vals.forEach(v => cats.add(v));
+      for (let i = 0; i < m; i++) for (let j = 0; j < m; j++) if (i !== j) {
+        o[vals[i]] = o[vals[i]] || {}; o[vals[i]][vals[j]] = (o[vals[i]][vals[j]] || 0) + 1 / (m - 1);
+      }
+    });
+    const list = [...cats]; const nc = {}; let off = 0;
+    list.forEach(c => { nc[c] = 0; list.forEach(k => { const v = (o[c] && o[c][k]) || 0; nc[c] += v; if (c !== k) off += v; }); });
+    const n = Object.values(nc).reduce((a, b) => a + b, 0);
+    let expected = 0; list.forEach(c => list.forEach(k => { if (c !== k) expected += nc[c] * nc[k]; }));
+    if (n < 2 || expected === 0) return null;
+    return 1 - (n - 1) * off / expected;
+  }
+  function qStats(q) {
+    const units = unitsFor(q);
+    const hKeys = HUMANS.map(r => r.key), allKeys = R.map(r => r.key);
+    let uN = 0, uY = 0;
+    units.forEach(u => { const v = hKeys.map(k => u[k]).filter(x => x != null); if (v.length >= 2) { uN++; if (new Set(v).size === 1) uY++; } });
+    let aN = 0, aY = 0;
+    C.forEach(c => { const h = analyze(c, q, HUMANS); const a = lab(q, raw(c, q, AI).label); if (h.majority != null && a != null) { aN++; if (a === h.majority) aY++; } });
+    const cells = C.map(c => cell(c, q));
+    return {
+      unanimous: uN ? uY / uN : null, uN, uY,
+      pairH: pairAgreement(units, hKeys), alphaH: krippAlpha(units, hKeys),
+      aiMaj: aN ? aY / aN : null, aN, aY,
+      alphaAll: krippAlpha(units, allKeys),
+      splits: cells.filter(x => x.status === 'split').length,
+      thin: cells.filter(x => x.status === 'thin').length,
+      answered: R.map(r => units.filter(u => u[r.key] != null).length),
+    };
+  }
+  function raterDisagreements(r, q) {
+    let k = 0, n = 0;
+    C.forEach(c => { const a = cell(c, q); if (a.majority != null && a.labels[r.key] != null) { n++; if (a.dis.includes(r.key)) k++; } });
+    return { k, n };
+  }
+  function heatClass(frac) {
+    if (frac == null) return 'blank';
+    if (frac === 0) return 'h0';
+    if (frac <= .15) return 'h1'; if (frac <= .3) return 'h2'; if (frac <= .5) return 'h3'; if (frac <= .7) return 'h4'; return 'h5';
+  }
+  function convScore(c) {
+    let dis = 0, splits = 0, ai = 0;
+    Q.forEach(q => { const a = cell(c, q); dis += a.dis.length; if (a.status === 'split') splits++; if (a.aiDis) ai++; });
+    return { dis, splits, ai, total: dis + 2 * splits };
+  }
+  function fact(c, label) { const f = c.description.find(d => d.label.toLowerCase() === label.toLowerCase()); return f ? f.value : null; }
+  function convHint(c) {
+    const parts = (D.meta.hint_fields || []).map(l => fact(c, l)).filter(Boolean);
+    return parts.join(' · ');
+  }
+  function refLabel() { return state.ref === 'all' ? 'humans + AI' : 'humans only'; }
+
+  // ---------- overview ----------
+  function renderOverview() {
+    const el = document.getElementById('view-overview');
+    const stats = Q.map(q => ({ q, s: qStats(q) }));
+    let h = '';
+
+    // legend
+    h += '<section class="panel"><div class="panel-head"><h2>Answer options</h2><p>Exactly the options and colours the raters saw on Calibrate. Human answers were stored as scale values and mapped back to these names; the AI evaluator returns the names directly.</p></div>';
+    h += '<div class="legend">';
+    const seen = new Set();
+    Q.forEach(q => q.scale.forEach(o => { const k = o.name; if (!seen.has(k)) { seen.add(k); h += chip(k) + '<span class="muted" style="margin-right:6px">' + esc(o.description) + '</span>'; } }));
+    h += '</div>';
+    h += '<div class="note"><p><b>Majority</b> = the most common answer among the reference raters (currently <b>' + refLabel() + '</b>) who answered; the tally next to it (e.g. 2/' + HUMANS.length + ') shows how strong it is, so a 2–1–1 pattern still yields a majority of 2. A tie for the most common answer is a <b>split</b> (no majority). Any rater whose answer differs from the majority is flagged like this: <span class="chip opt sm dis" style="--c:#6b7280">answer</span>. The AI evaluator is always compared against the majority even when it is not part of it.</p>';
+    if (state.cat === 'yes') h += '<p><b>Options are grouped</b>: for questions with more than two options, every answer other than the first option counts as “Not &lt;first option&gt;”. Two-option questions are left as they are.</p>';
+    h += '</div></section>';
+
+    // per-question table
+    h += '<section class="panel"><div class="panel-head"><h2>Agreement by question</h2><p>How often the ' + HUMANS.length + ' human raters agreed with each other, and how often the AI evaluator landed on the human majority answer. Krippendorff’s α corrects for chance agreement (1 = perfect, 0 = chance, negative = worse than chance); percentages are raw.</p></div>';
+    h += '<div class="tablewrap"><table><thead><tr><th>Question</th><th class="num">Humans unanimous</th><th class="num">Human pairwise agreement</th><th class="num">α humans</th><th class="num">AI = human majority</th><th class="num">α humans + AI</th><th class="num">Splits (' + esc(refLabel()) + ')</th><th class="num">Answers per rater</th></tr></thead><tbody>';
+    stats.forEach(({ q, s }) => {
+      h += '<tr><th title="' + esc(q.description + ' — ' + q.rubric) + '">' + esc(q.short) + (q.optional ? ' <span class="muted">(optional)</span>' : '') + '</th>';
+      h += '<td class="num">' + bar(s.unanimous, s.uY + ' of ' + s.uN + ' conversations with ≥2 human answers') + '</td>';
+      h += '<td class="num">' + bar(s.pairH, 'mean over the ' + (HUMANS.length * (HUMANS.length - 1) / 2) + ' pairs of human raters, conversations both answered') + '</td>';
+      h += '<td class="num" data-tip="Krippendorff’s alpha (nominal) over the ' + HUMANS.length + ' human raters">' + fmtAlpha(s.alphaH) + '</td>';
+      h += '<td class="num">' + bar(s.aiMaj, s.aY + ' of ' + s.aN + ' conversations with a human majority', true) + '</td>';
+      h += '<td class="num" data-tip="Krippendorff’s alpha (nominal) over the ' + HUMANS.length + ' human raters plus the AI evaluator">' + fmtAlpha(s.alphaAll) + '</td>';
+      h += '<td class="num">' + s.splits + (s.thin ? ' <span class="muted" data-tip="' + s.thin + ' conversations had fewer than 2 reference answers">(+' + s.thin + ' too few)</span>' : '') + '</td>';
+      h += '<td class="num mono muted" data-tip="' + esc(R.map((r, i) => r.short + ': ' + s.answered[i]).join('\n')) + '">' + s.answered.join(' / ') + '</td></tr>';
+    });
+    h += '</tbody></table></div>';
+    h += '<div class="note"><p>“AI = human majority” always uses the human majority, regardless of the toggle. The last column lists answers per rater in the order ' + esc(R.map(r => r.short).join(' / ')) + '.</p></div></section>';
+
+    // heatmap: rater x question disagreements
+    h += '<div class="grid-2">';
+    h += '<section class="panel"><div class="panel-head"><h2>Who disagrees with the majority</h2><p>Conversations where the rater’s answer differed from the majority (' + esc(refLabel()) + '), out of the conversations where a majority existed and the rater answered.</p></div>';
+    h += '<div class="tablewrap"><table class="heat"><thead><tr><th>Rater</th>' + Q.map(q => '<th class="rot">' + esc(q.short) + '</th>').join('') + '<th class="rot">All questions</th></tr></thead><tbody>';
+    R.forEach(r => {
+      let K = 0, N = 0;
+      h += '<tr><th' + (r.kind === 'ai' ? ' class="aihead"' : '') + '>' + esc(r.name) + '</th>';
+      Q.forEach(q => {
+        const d = raterDisagreements(r, q); K += d.k; N += d.n;
+        const frac = d.n ? d.k / d.n : null;
+        h += '<td class="cell"><div class="cellin ' + heatClass(frac) + '" data-tip="' + esc(r.name + ' · ' + q.short + '\n' + d.k + ' of ' + d.n + ' off the majority' + (frac == null ? '' : ' (' + pct(frac) + ')')) + '">' + (d.n ? d.k + '<span class="muted" style="font-size:10.5px">/' + d.n + '</span>' : '–') + '</div></td>';
+      });
+      const fr = N ? K / N : null;
+      h += '<td class="cell"><div class="cellin ' + heatClass(fr) + '" data-tip="' + esc(r.name + ': ' + K + ' of ' + N + ' (' + pct(fr) + ')') + '"><b>' + K + '</b><span style="font-size:10.5px">/' + N + '</span></div></td></tr>';
+    });
+    h += '</tbody></table></div><div class="note"><p>Darker = larger share of that rater’s answers off the majority. In “Humans only” mode each human rater is compared against a majority that includes their own vote, which makes a lone dissent harder to reach than for the AI; switch to “Humans + AI” for a symmetric comparison.</p></div></section>';
+
+    // pairwise matrix
+    h += '<section class="panel"><div class="panel-head"><h2>Pairwise agreement</h2><p>Share of conversations where two raters gave the same answer (only conversations both answered).</p>';
+    h += '<label class="control" style="margin-left:auto">Question <select id="matrix-q">' + ['<option value="all"' + (state.matrixQ === 'all' ? ' selected' : '') + '>All questions pooled</option>'].concat(Q.map(q => '<option value="' + esc(q.key) + '"' + (state.matrixQ === q.key ? ' selected' : '') + '>' + esc(q.short) + '</option>')).join('') + '</select></label></div>';
+    const units = state.matrixQ === 'all' ? Q.flatMap(q => unitsFor(q)) : unitsFor(Q.find(q => q.key === state.matrixQ));
+    h += '<div class="tablewrap"><table class="heat"><thead><tr><th></th>' + R.map(r => '<th class="rot' + (r.kind === 'ai' ? ' aihead' : '') + '">' + esc(r.short) + '</th>').join('') + '</tr></thead><tbody>';
+    R.forEach(a => {
+      h += '<tr><th' + (a.kind === 'ai' ? ' class="aihead"' : '') + '>' + esc(a.short) + '</th>';
+      R.forEach(b => {
+        if (a.key === b.key) { h += '<td class="cell"><div class="cellin blank">·</div></td>'; return; }
+        const p = pairRate(units, a.key, b.key);
+        const frac = p ? 1 - p.rate : null; // darker = more disagreement, consistent with the other heatmap
+        h += '<td class="cell"><div class="cellin ' + heatClass(frac) + '" data-tip="' + esc(a.short + ' × ' + b.short + '\n' + (p ? p.same + ' of ' + p.both + ' same answer' : 'no overlap')) + '">' + (p ? pct(p.rate) : '–') + '</div></td>';
+      });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div><div class="note"><p>Darker = lower agreement. The AI row shows whether it agrees with each rater about as often as the raters agree with each other.</p></div></section>';
+    h += '</div>';
+
+    // distributions
+    h += '<section class="panel"><div class="panel-head"><h2>How each rater used the options</h2><p>Share of the ' + C.length + ' conversations rated with each option. A rater who never uses “No” or always says “Yes” shows up here immediately.</p>';
+    h += '<button class="linkbtn" id="dist-toggle" style="margin-left:auto">' + (state.distCounts ? 'Show bars' : 'Show counts') + '</button></div>';
+    h += '<div class="legend" style="margin-bottom:10px">' + [...seen].map(k => '<span><i class="sw" style="background:' + esc(scaleColor(k)) + '"></i>' + esc(k) + '</span>').join('') + (state.cat === 'yes' ? [...new Set(Q.filter(groupable).map(notLabel))].map(n => '<span><i class="sw" style="background:var(--cal-not)"></i>' + esc(n) + '</span>').join('') : '') + '</div>';
+    h += '<div class="tablewrap"><table><thead><tr><th>Question</th>' + R.map(r => '<th' + (r.kind === 'ai' ? ' class="aihead"' : '') + '>' + esc(r.short) + '</th>').join('') + '</tr></thead><tbody>';
+    Q.forEach(q => {
+      const opts = state.cat === 'yes' && groupable(q) ? [q.scale[0].name, notLabel(q)] : q.scale.map(o => o.name);
+      h += '<tr><th>' + esc(q.short) + '</th>';
+      R.forEach(r => {
+        const counts = {}; let n = 0;
+        C.forEach(c => { const l = lab(q, raw(c, q, r).label); if (l != null) { counts[l] = (counts[l] || 0) + 1; n++; } });
+        if (!n) { h += '<td class="muted">no answers</td>'; return; }
+        const tip = opts.map(o => o + ': ' + (counts[o] || 0)).join('\n') + '\n(' + n + ' answered)';
+        if (state.distCounts) {
+          h += '<td class="stackcount" data-tip="' + esc(tip) + '">' + opts.map(o => '<span style="color:' + esc(scaleColor(o)) + '">■</span> ' + (counts[o] || 0)).join('  ') + '</td>';
+        } else {
+          h += '<td><div class="stack" data-tip="' + esc(tip) + '">' + opts.filter(o => counts[o]).map(o => '<span style="--w:' + counts[o] + ';background:' + esc(scaleColor(o)) + '"></span>').join('') + '</div></td>';
+        }
+      });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div></section>';
+
+    el.innerHTML = h;
+    const sel = document.getElementById('matrix-q'); if (sel) sel.addEventListener('change', e => { state.matrixQ = e.target.value; renderOverview(); });
+    const dt = document.getElementById('dist-toggle'); if (dt) dt.addEventListener('click', () => { state.distCounts = !state.distCounts; renderOverview(); });
+  }
+  function scaleColor(name) {
+    for (const q of Q) { const o = q.scale.find(s => s.name === name); if (o && o.color) return o.color; }
+    return /^Not /.test(name) ? '#475569' : '#6b7280';
+  }
+  function bar(v, tip, accent) {
+    if (v == null) return '<span class="muted">–</span>';
+    return '<span class="bar" data-tip="' + esc(tip || '') + '"><span class="track"><span class="fill" style="width:' + Math.round(v * 100) + '%"></span></span><span class="val">' + pct(v) + '</span></span>';
+  }
+
+  // ---------- conversations ----------
+  function orderedConvs() {
+    const list = C.map(c => ({ c, s: convScore(c) }));
+    if (state.qFocus) {
+      list.sort((a, b) => {
+        const qa = cell(a.c, Q.find(q => q.key === state.qFocus)), qb = cell(b.c, Q.find(q => q.key === state.qFocus));
+        const wa = (qa.status === 'split' ? 100 : 0) + qa.dis.length * 10 + (qa.aiDis ? 1 : 0);
+        const wb = (qb.status === 'split' ? 100 : 0) + qb.dis.length * 10 + (qb.aiDis ? 1 : 0);
+        return wb - wa || a.c.idx - b.c.idx;
+      });
+    } else if (state.sort === 'disagree') list.sort((a, b) => b.s.total - a.s.total || b.s.ai - a.s.ai || a.c.idx - b.c.idx);
+    else if (state.sort === 'ai') list.sort((a, b) => b.s.ai - a.s.ai || b.s.total - a.s.total || a.c.idx - b.c.idx);
+    return list;
+  }
+  function renderList() {
+    const el = document.getElementById('convlist');
+    const list = orderedConvs();
+    let h = '<div class="tools"><span class="eyebrow">' + C.length + ' conversations</span>';
+    h += '<label>Sort <select id="sort-sel"><option value="disagree"' + (state.sort === 'disagree' ? ' selected' : '') + '>Most disagreement</option><option value="ai"' + (state.sort === 'ai' ? ' selected' : '') + '>AI off majority</option><option value="order"' + (state.sort === 'order' ? ' selected' : '') + '>Original order</option></select></label>';
+    h += '<label>Focus <select id="focus-sel"><option value="">All questions</option>' + Q.map(q => '<option value="' + esc(q.key) + '"' + (state.qFocus === q.key ? ' selected' : '') + '>' + esc(q.short) + '</option>').join('') + '</select></label></div>';
+    list.forEach(({ c, s }) => {
+      h += '<button class="convrow" data-idx="' + c.idx + '" aria-current="' + (C[state.sel].idx === c.idx) + '">';
+      h += '<span class="ix num">' + c.idx + '</span><span class="id">' + esc(c.id) + '</span>';
+      h += '<span class="mini">' + Q.map(q => {
+        const a = cell(c, q);
+        let cls = a.status === 'split' ? 'split' : a.status === 'thin' ? 'thin' : a.dis.length ? 'd' + Math.min(4, a.dis.length) : '';
+        if (a.aiDis) cls += ' ai';
+        if (state.qFocus && q.key !== state.qFocus) cls += ' dim';
+        if (state.qFocus && q.key === state.qFocus) cls += ' focus';
+        const tip = q.short + ': ' + (a.status === 'split' ? 'split ' + a.sorted.map(x => x[0] + ' ' + x[1]).join(' · ') : a.status === 'thin' ? 'too few answers' : a.dis.length ? a.dis.map(k => BY_KEY[k].short).join(', ') + ' off the majority (' + a.majority + ')' : 'unanimous ' + a.majority);
+        return '<i class="' + cls + '" data-tip="' + esc(tip) + '">' + (a.dis.length || '') + '</i>';
+      }).join('') + '</span>';
+      h += '<span class="hint">' + esc(convHint(c) || '') + '</span>';
+      h += '<span class="badge">' + (s.dis ? s.dis + ' off' : '') + (s.splits ? (s.dis ? ' · ' : '') + s.splits + ' split' : '') + (!s.dis && !s.splits ? 'unanimous' : '') + '</span>';
+      h += '</button>';
+    });
+    h += '<div class="minilegend"><span><i></i>unanimous</span><span><i class="d2"></i>n raters off the majority (darker = more)</span><span><i class="split"></i>split, no majority</span><span><i class="ai"></i>AI off the majority</span><span><i class="thin"></i>too few answers</span></div>';
+    el.innerHTML = h;
+    el.querySelectorAll('.convrow').forEach(b => b.addEventListener('click', () => { selectConv(C.findIndex(c => c.idx === +b.dataset.idx)); }));
+    document.getElementById('sort-sel').addEventListener('change', e => { state.sort = e.target.value; persist(); renderList(); });
+    document.getElementById('focus-sel').addEventListener('change', e => { state.qFocus = e.target.value; renderList(); renderDetail(); });
+  }
+  function selectConv(i) {
+    state.sel = Math.max(0, Math.min(C.length - 1, i));
+    history.replaceState(null, '', '#c-' + C[state.sel].id);
+    renderList(); renderDetail();
+    const cur = document.querySelector('.convrow[aria-current="true"]'); if (cur) cur.scrollIntoView({ block: 'nearest' });
+    document.getElementById('detail').scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }
+  function ratingsCard(c) {
+    let h = '<div class="card"><div class="card-head"><h3>Ratings</h3><span class="sp"></span><span class="muted" style="font-size:12px">majority from ' + esc(refLabel()) + '</span></div>';
+    h += '<div class="tablewrap"><table class="rgrid"><thead><tr><th class="q">Question</th>' + R.map(r => '<th' + (r.kind === 'ai' ? ' class="aihead"' : '') + '>' + esc(r.short) + '</th>').join('') + '<th class="maj">Majority</th></tr></thead><tbody>';
+    Q.forEach(q => {
+      const a = cell(c, q);
+      h += '<tr class="' + a.status + '"><th class="q"><span class="qname" title="' + esc(q.rubric) + '">' + esc(q.short) + '</span><span class="qhelp">' + esc(q.description) + '</span></th>';
+      R.forEach(r => {
+        const l = a.labels[r.key]; const rs = raw(c, q, r).reasoning;
+        h += '<td><span class="chipwrap" data-tip="' + esc(r.name + (rs ? '\n' + rs : '\n(no reasoning given)')) + '">' + chip(l, a.dis.includes(r.key) ? 'dis' : '') + '</span></td>';
+      });
+      if (a.status === 'split') h += '<td class="maj"><span class="chip c-nei">Split</span><span class="tally">' + esc(a.sorted.map(x => x[0] + ' ' + x[1]).join(' · ')) + '</span></td>';
+      else if (a.status === 'thin') h += '<td class="maj"><span class="muted">too few answers</span></td>';
+      else h += '<td class="maj">' + chip(a.majority) + '<span class="tally num">' + a.majCount + '/' + a.n + '</span></td>';
+      h += '</tr>';
+    });
+    h += '</tbody></table></div></div>';
+    return h;
+  }
+  function renderDetail() {
+    const c = C[state.sel];
+    const el = document.getElementById('detail');
+    const s = convScore(c);
+    let h = '';
+    h += '<section class="panel"><div class="detail-head"><span class="eyebrow">Conversation ' + c.idx + ' of ' + C.length + '</span><h2 class="mono">Chat ' + esc(c.id) + '</h2>';
+    h += '<span class="muted">' + (s.dis ? s.dis + ' rating' + (s.dis > 1 ? 's' : '') + ' off the majority' : 'no rating off the majority') + (s.splits ? ' · ' + s.splits + ' split question' + (s.splits > 1 ? 's' : '') : '') + '</span>';
+    h += '<div class="nav"><button id="prev" ' + (state.sel === 0 ? 'disabled' : '') + '>← Previous</button><button id="next" ' + (state.sel === C.length - 1 ? 'disabled' : '') + '>Next →</button></div></div>';
+    h += '<div class="facts" style="margin-top:8px">' + c.description.filter(d => !/^(chat id|conversation id)$/i.test(d.label) && d.label !== D.meta.id_label).map(d => '<span class="f' + (d.value.length > 60 ? ' long' : '') + '">' + esc(d.label) + ': <b>' + esc(d.value) + '</b></span>').join('') + '</div>';
+    h += '</section>';
+
+    // ratings grid (full width so every column is visible)
+    h += ratingsCard(c);
+    h += '<div class="two">';
+    // transcript
+    h += '<div class="card"><div class="card-head"><h3>Transcript</h3><span class="sp"></span><button class="linkbtn" id="orig-toggle">' + (state.showOriginal ? 'Hide original text' : 'Show original text') + '</button></div><div class="transcript">';
+    c.transcript.forEach(m => {
+      h += '<div class="msg ' + (m.role === 'assistant' ? 'assistant' : 'user') + '"><div class="who"><b>' + esc(m.speaker) + '</b><span class="mono">' + esc(m.time || '') + '</span></div>';
+      h += '<div class="bubble">' + esc(m.translation) + (state.showOriginal && m.original ? '<div class="orig">' + esc(m.original) + '</div>' : '') + '</div>';
+      if (m.meta && m.meta.length) h += '<div class="metaline">' + m.meta.map(x => esc(x.label) + ' ' + esc(x.value)).join(' · ') + '</div>';
+      h += '</div>';
+    });
+    h += '</div></div>';
+
+    // discussion
+    h += '<div style="display:flex;flex-direction:column;gap:16px;min-width:0">';
+
+    // discussion points
+    const points = Q.map(q => ({ q, a: cell(c, q) })).filter(x => x.a.status === 'split' || x.a.status === 'disagree');
+    points.sort((x, y) => (y.a.status === 'split') - (x.a.status === 'split') || y.a.dis.length - x.a.dis.length);
+    h += '<div class="card"><div class="card-head"><h3>Where raters part ways</h3><span class="sp"></span><span class="muted" style="font-size:12px">' + points.length + ' of ' + Q.length + ' questions</span></div>';
+    if (!points.length) h += '<p class="empty">Every rater who answered agreed on every question.</p>';
+    h += '<div class="points">';
+    points.forEach(({ q, a }) => {
+      h += '<div class="point ' + a.status + '"><div class="ph"><span class="qn">' + esc(q.short) + '</span>';
+      if (a.status === 'split') h += '<span class="chip c-nei">Split</span><span class="muted">' + esc(a.sorted.map(x => x[0] + ' × ' + x[1]).join(' · ')) + '</span>';
+      else h += '<span class="muted">majority</span>' + chip(a.majority) + '<span class="muted num">' + a.majCount + ' of ' + a.n + '</span>';
+      h += '</div>';
+      const withReason = r => { const rs = raw(c, q, r).reasoning; return '<li><span><span class="who">' + esc(r.short) + (r.kind === 'ai' ? ' <span class="ai-tag">AI</span>' : '') + '</span> ' + chip(a.labels[r.key], 'sm') + '</span><span class="rs' + (rs ? '' : ' none') + '">' + esc(rs || 'no reasoning given') + '</span></li>'; };
+      if (a.status === 'split') {
+        h += '<ul>' + R.filter(r => a.labels[r.key] != null).map(withReason).join('') + '</ul>';
+      } else {
+        h += '<ul>' + a.dis.map(k => withReason(BY_KEY[k])).join('') + '</ul>';
+        const agreeing = R.filter(r => a.labels[r.key] === a.majority && raw(c, q, r).reasoning && r.kind !== 'ai');
+        if (agreeing.length) h += '<div class="sub">Agreed with the majority, and noted</div><ul>' + agreeing.map(withReason).join('') + '</ul>';
+      }
+      h += '</div>';
+    });
+    h += '</div>';
+    // comments
+    const comments = Object.entries(c.comments || {});
+    if (comments.length) h += '<h3 style="margin-top:14px">Rater comments on this conversation</h3><div class="comments" style="margin-top:6px">' + comments.map(([k, v]) => '<div><b>' + esc(BY_KEY[k] ? BY_KEY[k].short : k) + '</b><span>' + esc(v) + '</span></div>').join('') + '</div>';
+    // all reasoning
+    h += '<details class="all"><summary>All ratings and reasoning for this conversation</summary><div class="tablewrap"><table class="alltab"><thead><tr><th>Question</th>' + R.map(r => '<th>' + esc(r.short) + '</th>').join('') + '</tr></thead><tbody>';
+    Q.forEach(q => {
+      const a = cell(c, q);
+      h += '<tr><th>' + esc(q.short) + '</th>' + R.map(r => { const x = raw(c, q, r); return '<td>' + chip(a.labels[r.key], 'sm' + (a.dis.includes(r.key) ? ' dis' : '')) + '<br>' + (x.reasoning ? esc(x.reasoning) : '<span class="muted">–</span>') + '</td>'; }).join('') + '</tr>';
+    });
+    h += '</tbody></table></div></details>';
+    h += '</div>';
+    h += '</div></div>';
+    h += '<p class="note">Use <span class="kbd">←</span> <span class="kbd">→</span> to move between conversations.</p>';
+    el.innerHTML = h;
+    document.getElementById('prev').addEventListener('click', () => selectConv(state.sel - 1));
+    document.getElementById('next').addEventListener('click', () => selectConv(state.sel + 1));
+    document.getElementById('orig-toggle').addEventListener('click', () => { state.showOriginal = !state.showOriginal; persist(); renderDetail(); });
+  }
+
+  // ---------- shell ----------
+  function setTab(t) {
+    state.tab = t;
+    document.querySelectorAll('.tabs [role="tab"]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+    document.getElementById('view-overview').hidden = t !== 'overview';
+    document.getElementById('view-conversations').hidden = t !== 'conversations';
+    if (t === 'overview') history.replaceState(null, '', '#overview'); else history.replaceState(null, '', '#c-' + C[state.sel].id);
+  }
+  function renderAll() { analysisCache.clear(); renderOverview(); renderList(); renderDetail(); }
+  document.querySelectorAll('.tabs [role="tab"]').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+  document.getElementById('ref-seg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.ref = b.dataset.ref; persist(); syncSeg(); renderAll(); });
+  document.getElementById('cat-seg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.cat = b.dataset.cat; persist(); syncSeg(); renderAll(); });
+  function syncSeg() {
+    document.querySelectorAll('#ref-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ref === state.ref)));
+    document.querySelectorAll('#cat-seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cat === state.cat)));
+  }
+  document.addEventListener('keydown', e => {
+    if (state.tab !== 'conversations' || e.target.matches('input, select, textarea')) return;
+    if (e.key === 'ArrowRight' || e.key === 'j') selectConv(state.sel + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'k') selectConv(state.sel - 1);
+  });
+  // tooltip
+  const tip = document.getElementById('tip');
+  document.addEventListener('mouseover', e => {
+    const t = e.target.closest('[data-tip]'); if (!t) { tip.hidden = true; return; }
+    tip.textContent = t.dataset.tip; tip.hidden = false;
+  });
+  document.addEventListener('mousemove', e => {
+    if (tip.hidden) return;
+    const x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8), y = Math.min(e.clientY + 16, window.innerHeight - tip.offsetHeight - 8);
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  });
+  document.addEventListener('mouseout', e => { if (e.target.closest && e.target.closest('[data-tip]')) tip.hidden = true; });
+
+  document.getElementById('subtitle').textContent = D.meta.task_name + ' · ' + C.length + ' conversations · ' + HUMANS.length + ' human raters + ' + AI.name + ' · built ' + D.meta.generated_at;
+  if (D.meta.task_url) { const a = document.createElement('a'); a.href = D.meta.task_url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open task on Calibrate'; a.style.marginLeft = '8px'; document.getElementById('subtitle').appendChild(a); }
+  // The grouping toggle only means something when a question has more than two options.
+  const firsts = [...new Set(Q.filter(groupable).map(q => q.scale[0].name))];
+  if (!firsts.length) { document.getElementById('cat-control').hidden = true; state.cat = 'strict'; }
+  else if (firsts.length === 1) document.getElementById('cat-yes-btn').textContent = firsts[0] + ' vs. not ' + firsts[0];
+  syncSeg();
+  const m = /^#c-([\w-]+)$/.exec(location.hash);
+  if (m) { const i = C.findIndex(c => c.id === m[1]); if (i >= 0) { state.sel = i; state.tab = 'conversations'; } }
+  renderAll();
+  setTab(state.tab);
+})();
+</script>
+</body>
+</html>
